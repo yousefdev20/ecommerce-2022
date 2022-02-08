@@ -1,0 +1,57 @@
+version: '3'
+services:
+    iron:
+        build:
+            context: ./docker-config
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        image: iron
+        ports:
+            - '${APP_PORT:-83}:80'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+        container_name: 'ironApp'
+        volumes:
+            - '.:/var/www/html/Iron'
+        networks:
+            - iron
+        depends_on:
+            - mysql
+            - redis
+    mysql:
+        image: 'mysql:8.0'
+        ports:
+            - '${FORWARD_DB_PORT:-33066}:3306'
+        container_name: 'ironDatabase'
+        environment:
+            MYSQL_ROOT_PASSWORD: 'yousef'
+            MYSQL_DATABASE: 'iron'
+            MYSQL_USER: 'yousef'
+            MYSQL_PASSWORD: 'yousef'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        volumes:
+            - 'IronMysql:/var/lib/mysql'
+        networks:
+            - iron
+    redis:
+        image: 'redis:latest'
+        container_name: 'IronRedis'
+        restart: unless-stopped
+        tty: true
+        ports:
+            - '63791:6379'
+        volumes:
+            - 'IronRedis:/data'
+        networks:
+            - iron
+networks:
+    iron:
+        driver: bridge
+volumes:
+    IronMysql:
+        driver: local
+    IronRedis:
+        driver: local
