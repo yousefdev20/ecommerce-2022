@@ -16,6 +16,11 @@ class Product extends Model
         'description_id'
     ];
 
+    public function getImageAttribute($value): string|\Illuminate\Contracts\Routing\UrlGenerator|\Illuminate\Contracts\Foundation\Application
+    {
+        return url($value ?? '');
+    }
+
     public function category() {
 
         return $this->belongsTo(Category::class);

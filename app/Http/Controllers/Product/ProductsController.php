@@ -79,4 +79,14 @@ class ProductsController extends Controller
     {
         return $this->response($product->delete());
     }
+
+    /**
+     * get the latest (8) product from storage.
+     *
+     * @return JsonResponse
+     */
+    public function latestProduct(int $count = 8): JsonResponse
+    {
+        return $this->response(Product::query()->latest()->with(['currency'])->limit($count)->get());
+    }
 }
