@@ -29,6 +29,7 @@ class ProductsController extends Controller
      */
     public function store(StoreProductRequest $request): JsonResponse
     {
+        return $this->response($request->validated());
         $product = ProductDescription::query()->create($request->only(['description_ar', 'description_en']))
             ->product()->create($request->except(['description_ar', 'description_en']));
         (!$request->sizes) ?: $product->sizes()->create();
