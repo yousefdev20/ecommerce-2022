@@ -1,10 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Deal\DealController;
 use App\Http\Controllers\Auth\Admin\LoginController;
 use App\Http\Controllers\Product\ProductsController;
-use App\Http\Controllers\Product\ProductColorsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,4 +23,6 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('products', ProductsController::class);
 
     Route::resource('orders', ProductsController::class)->only('store', 'show');
+
+    Route::resource('deals', DealController::class)->only('store', 'show');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\Products\StoreSizeRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProductRequest extends FormRequest
@@ -34,7 +35,10 @@ class StoreProductRequest extends FormRequest
             'category_id' => 'required',
             'description_en' => 'required',
             'description_ar' => 'required',
-            'sizes' => 'array|nullable',
+            'sizes' => [new StoreSizeRule],
+//            'sizes' => 'array|nullable',
+//            'sizes.size' => 'array|nullable',
+//            'sizes.product_id' => 'array|nullable',
             'colors' => 'nullable'
         ];
     }
