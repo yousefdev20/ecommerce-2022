@@ -3,8 +3,9 @@
 namespace App\Models\Product;
 
 use App\Models\Currency\Currency;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use \App\Http\Services\Facades\Currencies\Currency as FacadeCurrency;
 
 class Product extends Model
 {
@@ -21,33 +22,48 @@ class Product extends Model
         return url($value ?? '');
     }
 
-    public function category() {
+    public function getCurrencyIdAttribute($value): int
+    {
+        return FacadeCurrency::id();
+    }
 
+    public function getSalePriceAttribute($value): float
+    {
+        return ((FacadeCurrency::exchange($value) * 10) / 10);
+    }
+
+    public function getRegularPriceAttribute($value)
+    {
+        return ((FacadeCurrency::exchange($value) * 100) / 100);
+    }
+
+    public function category()
+    {
         return $this->belongsTo(Category::class);
     }
 
-    public function currency() {
-
+    public function currency()
+    {
         return $this->belongsTo(Currency::class);
     }
 
-    public function description() {
-
+    public function description()
+    {
         return $this->belongsTo(ProductDescription::class, 'product_description_id', 'id');
     }
 
-    public function colors() {
-
+    public function colors()
+    {
         return $this->belongsToMany(Product::class, 'product_color');
     }
 
-    public function images() {
-
+    public function images()
+    {
         return $this->hasMany(ProductImages::class);
     }
 
-    public function sizes() {
-
+    public function sizes()
+    {
         return $this->hasMany(ProductSize::class);
     }
 }

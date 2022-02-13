@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Product\ProductsController;
 use App\Http\Controllers\Deal\DealController;
+use App\Http\Controllers\Product\ProductsController;
+use App\Http\Controllers\Currency\CurrenciesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,5 +26,8 @@ Route::group(['middleware' => ['throttle:60']], function () {
 
     Route::resource('deals', DealController::class)->only('show', 'index');
 
+    Route::resource('currencies', CurrenciesController::class)->only('show', 'index');
+
     Route::get('deals/latest/product', [DealController::class, 'latestDealProduct']);
+
 });

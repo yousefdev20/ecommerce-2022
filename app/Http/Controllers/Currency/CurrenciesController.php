@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Currency;
 
 use App\Models\Currency\Currency;
+use App\Repositories\Currencies\CurrencyInterface;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCurrencyRequest;
@@ -15,9 +16,9 @@ class CurrenciesController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(CurrencyInterface $currency): JsonResponse
     {
-        return $this->response(Currency::all());
+        return $this->response($currency->get());
     }
 
     /**

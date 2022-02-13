@@ -47,6 +47,17 @@ services:
             - 'IronRedis:/data'
         networks:
             - iron
+    nginx:
+        image: nginx:alpine
+        ports:
+            - "85:80"
+        volumes:
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+            - '.:/var/www/html/Iron'
+        depends_on:
+            - iron
+        networks:
+            - iron
 networks:
     iron:
         driver: bridge
