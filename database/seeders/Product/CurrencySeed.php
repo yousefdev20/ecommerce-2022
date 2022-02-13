@@ -20,5 +20,11 @@ class CurrencySeed extends Seeder
                 'code_en' => 'JOD', 'code_ar' => 'د.ا',
                 'exchange' => 0.72
             ]);
+        Currency::query()->updateOrInsert(['name_en' => 'USD'],
+            [
+                'name_en' => 'USD', 'name_ar' => 'USD',
+                'code_en' => 'USD', 'code_ar' => 'USD',
+                'exchange' => 1
+            ]);
     }
 }
