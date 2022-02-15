@@ -24,6 +24,11 @@ class AddForeignKeysToProductsTable extends Migration
                 ->on('categories')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->foreign('subcategory_id')
+                ->references('id')
+                ->on('categories')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->foreign('product_description_id')
                 ->references('id')
                 ->on('product_descriptions')

@@ -23,6 +23,7 @@ class CreateProductsTable extends Migration
             $table->string('image');
             $table->unsignedBigInteger('currency_id')->index();
             $table->unsignedBigInteger('category_id')->index();
+            $table->unsignedBigInteger('subcategory_id')->index();
             $table->unsignedBigInteger('product_description_id')->index();
             $table->timestamps();
         });
