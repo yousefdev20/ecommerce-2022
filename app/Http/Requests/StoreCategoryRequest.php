@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCategoryRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,10 @@ class StoreCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name_ar' => 'required|unique:categories',
+            'name_en' => 'required|unique:categories',
+            'image' => 'nullable',
+            'parent_id' => Rule::when(request('parent_id') ?? false, ['exists:categories,id'])
         ];
     }
 }

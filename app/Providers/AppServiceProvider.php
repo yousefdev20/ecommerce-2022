@@ -2,9 +2,13 @@
 
 namespace App\Providers;
 
+use App\Repositories\Colors\Colors;
+use App\Repositories\Colors\ColorsInterface;
+use Illuminate\Support\ServiceProvider;
 use App\Repositories\Currencies\Currency;
 use App\Repositories\Currencies\CurrencyInterface;
-use Illuminate\Support\ServiceProvider;
+use App\Repositories\Category\CategoriesRepository;
+use App\Repositories\Category\CategoriesRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,11 +19,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(CurrencyInterface::class, function () {
+        app()->bind(CurrencyInterface::class, function () {
             return new Currency();
         });
 
-        $this->app->bind('Currency', function () {
+        app()->bind(CategoriesRepositoryInterface::class, function () {
+            return new CategoriesRepository();
+        });
+
+        app()->bind(ColorsInterface::class, function () {
+            return new Colors();
+        });
+
+        app()->bind('Currency', function () {
             return new \App\Http\Services\Currency(new Currency());
         });
     }

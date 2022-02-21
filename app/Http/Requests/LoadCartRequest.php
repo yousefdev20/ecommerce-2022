@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateSubCategoriesRequest extends FormRequest
+class LoadCartRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,8 @@ class UpdateSubCategoriesRequest extends FormRequest
     public function rules()
     {
         return [
-            'category_id' => 'required|exist:categories,id'
+            'cart.products.*.id' => 'nullable|exists:products,id',
+            'cart.currency.code' => 'required|exists:currencies,code_en'
         ];
     }
 }

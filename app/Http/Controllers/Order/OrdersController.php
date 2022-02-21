@@ -28,6 +28,7 @@ class OrdersController extends Controller
      */
     public function store(StoreOrderRequest $request): JsonResponse
     {
+        dd($request->validated());
         return $this->response(Order::query()->create($request->validated()));
     }
 

@@ -22,7 +22,7 @@ services:
             - mysql
             - redis
     mysql:
-        image: 'mariadb:10.5.8'
+        image: 'mysql:8.0.28'
         ports:
             - '${FORWARD_DB_PORT:-33066}:3306'
         container_name: 'ironDatabase'

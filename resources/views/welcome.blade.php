@@ -24,5 +24,6 @@
         <h1>
             Iron Bridge
         </h1>
+    {{ $data ?? [] }}
     </body>
 </html>

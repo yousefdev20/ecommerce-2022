@@ -26,4 +26,15 @@ class Currency implements CurrencyInterface
         return collect($this->get())->where('code_en', '=', $code)->first() ??
             collect($this->get())->where('code_en', '=', 'USD')->first();
     }
+
+    public function delete()
+    {
+        return Cache::forget('currencies');
+    }
+
+    public function refresh()
+    {
+        $this->delete();
+        $this->store();
+    }
 }

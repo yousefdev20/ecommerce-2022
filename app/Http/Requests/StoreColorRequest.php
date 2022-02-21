@@ -13,7 +13,7 @@ class StoreColorRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,9 @@ class StoreColorRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name_en' => 'required|unique:colors,name_en',
+            'name_ar' => 'required|unique:colors,name_ar',
+            'code' => 'required|unique:colors,code'
         ];
     }
 }

@@ -77,7 +77,7 @@ class DealController extends Controller
     public function latestDealProduct(): JsonResponse
     {
         return $this->response(Deal::query()->latest()?->with(['latestDealProduct' => function($query) {
-                return $query->limit(9);
+                return $query->limit(8);
             }])->first() ?? []);
     }
 }

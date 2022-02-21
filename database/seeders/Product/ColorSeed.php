@@ -14,6 +14,9 @@ class ColorSeed extends Seeder
      */
     public function run()
     {
-        Color::query()->updateOrInsert(['name' => 'red'], ['name' => 'red', 'code' => '123']);
+        Color::query()->updateOrInsert(
+            ['name_en' => 'red'],
+            ['name_en' => 'red', 'name_ar' => 'احمر', 'code' => '123']
+        );
     }
 }

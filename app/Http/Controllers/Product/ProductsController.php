@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Models\Product\Product;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Product\ProductDescription;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Models\Product\Product;
-use App\Models\Product\ProductDescription;
-use Illuminate\Http\JsonResponse;
 
 class ProductsController extends Controller
 {
@@ -30,11 +32,11 @@ class ProductsController extends Controller
     public function store(StoreProductRequest $request): JsonResponse
     {
 //        return $this->response($request->validated();
-        $product = ProductDescription::query()->create($request->only(['description_ar', 'description_en']))
-            ->product()->create($request->except(['description_ar', 'description_en']));
-        (!$request->sizes) ?: $product->sizes()->create();
-        (!$request->colors) ?: $product->colors()->create(['size' => 'LG']);
-        (!$request->images) ?: $product->images()->create(['size' => 'LG']);
+//        $product = ProductDescription::query()->create($request->only(['description_ar', 'description_en']))
+//            ->product()->create($request->except(['description_ar', 'description_en']));
+//        (!$request->sizes) ?: $product->sizes()->create();
+//        (!$request->colors) ?: $product->colors()->create(['size' => 'LG']);
+//        (!$request->images) ?: $product->images()->create(['size' => 'LG']);
         return $this->response(
             ProductDescription::query()->create($request->only(['description_ar', 'description_en']))
                 ->product()->create($request->except(['description_ar', 'description_en']))
@@ -94,5 +96,46 @@ class ProductsController extends Controller
     public function latestProduct(int $count = 8): JsonResponse
     {
         return $this->response(Product::query()->latest()->with(['currency'])->limit($count)->get());
+    }
+
+    /**
+     * get the latest (8) product from storage.
+     *
+     * @return JsonResponse
+     */
+    public function bestSelling(int $count = 8): JsonResponse
+    {
+        $products = DB::table('order_product')
+            ->select(DB::raw('count(product_id) as count', 'product_id'))->get();
+        return $this->response($products);
+    }
+
+    /**
+     * Load Products Base on Filter (Category, Color, Price)
+     *
+     * @param Request
+     * @return JsonResponse
+     */
+    public function getProducts(Request $request): JsonResponse
+    {
+        $products = Product::query();
+
+        # Category
+        if ($request->category) {
+            $products->with(['currency'])->whereHas('category', function ($query) use ($request) {
+                $query->where('id', $request->category);
+            });
+        }
+        # Colors
+        if ($request->color) {
+            $products->with(['colors'])->whereHas('colors', function ($query) use ($request) {
+                $query->where('color_id', $request->color);
+            });
+        }
+        # Price [from-to]
+        if ($request->price) {
+            $products->where([['sale_price', '>=', $request->price->from], ['sale_price', '<=', $request->price->to]]);
+        }
+        return $this->response($products->simplePaginate(9));
     }
 }

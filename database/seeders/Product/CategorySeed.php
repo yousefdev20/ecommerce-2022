@@ -14,6 +14,7 @@ class CategorySeed extends Seeder
      */
     public function run()
     {
-        Category::query()->updateOrInsert(['name_en' => 'Computer'], ['name_en' => 'Computer', 'name_ar' => 'كمبيوتر']);
+        Category::query()->updateOrInsert(['name_en' => 'Computer'],
+            ['name_en' => 'Computer', 'name_ar' => 'كمبيوتر', 'level' => 1]);
     }
 }

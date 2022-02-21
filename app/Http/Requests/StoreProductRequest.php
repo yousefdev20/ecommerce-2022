@@ -32,8 +32,8 @@ class StoreProductRequest extends FormRequest
             'sale_price' => 'required|numeric|min:0',
             'quantity' => 'nullable',
             'image' => 'required',
-            'currency_id' => 'required',
-            'category_id' => 'required',
+            'currency_id' => 'required|exists:currencies,id',
+            'category_id' => 'required|exists:categories,id',
             'description_en' => 'required',
             'description_ar' => 'required',
             'sizes' => 'nullable|array',
@@ -47,9 +47,9 @@ class StoreProductRequest extends FormRequest
             'colors.*.color_id' => [Rule::requiredIf(function () {
                 return request('colors') ?? false;
             }), 'exists:colors,id'],
-            'colors.*.product_id' => [Rule::requiredIf(function () {
-                return request('colors') ?? false;
-            }), 'exists:colors,id'],
+//            'colors.*.product_id' => [Rule::requiredIf(function () {
+//                return request('colors') ?? false;
+//            }), 'exists:colors,id'],
         ];
     }
 }

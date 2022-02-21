@@ -63,6 +63,10 @@ class CurrenciesController extends Controller
      */
     public function destroy(Currency $currency): JsonResponse
     {
+        if ($currency->has(['products'])){
+
+            return $this->response([], 'this object has relationship', 422);
+        }
         return $this->response($currency->delete());
     }
 }

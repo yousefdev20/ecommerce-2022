@@ -2,9 +2,10 @@
 
 namespace App\Repositories\Currencies;
 
-interface CurrencyInterface
+use App\Repositories\ISearchable;
+use App\Repositories\IStorable;
+
+interface CurrencyInterface extends IStorable, ISearchable
 {
-    public function get();
-    public function find(string $code = 'USD');
-    public function store();
 }
+

@@ -17,13 +17,11 @@ class AddForeignKeysToDealProductTable extends Migration
             $table->foreign('deal_id')
                 ->references('id')
                 ->on('deals')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+                ->cascadeOnUpdate();
             $table->foreign('product_id')
                 ->references('id')
                 ->on('products')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+                ->cascadeOnUpdate();
         });
     }
 

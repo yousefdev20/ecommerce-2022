@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Models\Product\Color;
+use App\Repositories\Colors\ColorsInterface;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreColorRequest;
@@ -15,9 +16,9 @@ class ColorsController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(ColorsInterface $colors): JsonResponse
     {
-        return $this->response(Color::all());
+        return $this->response($colors->get());
     }
 
     /**

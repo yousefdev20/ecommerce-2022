@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Product\Category;
+use App\Models\Product\Color;
+use App\Observers\CategoryObserver;
+use App\Observers\ColorsObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -27,6 +31,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Category::observe(CategoryObserver::class);
+        Color::observe(ColorsObserver::class);
     }
 }

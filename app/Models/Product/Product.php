@@ -11,6 +11,7 @@ class Product extends Model
 {
     use HasFactory;
 
+    protected $with = ['currency'];
     protected $fillable = [
         'name_ar', 'name_en', 'regular_price', 'sale_price',
         'quantity', 'image', 'currency_id', 'category_id',

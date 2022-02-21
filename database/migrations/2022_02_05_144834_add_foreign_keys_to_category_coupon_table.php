@@ -17,13 +17,11 @@ class AddForeignKeysToCategoryCouponTable extends Migration
             $table->foreign('coupon_id')
                 ->references('id')
                 ->on('coupon_codes')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+                ->cascadeOnUpdate();
             $table->foreign('category_id')
                 ->references('id')
                 ->on('categories')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+                ->cascadeOnUpdate();
         });
     }
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\QuantityIsEnough;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -11,9 +13,9 @@ class StoreOrderRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +26,27 @@ class StoreOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'order.products.*.product_id' => [
+                'required', 'exists:products,id', new QuantityIsEnough()
+            ],
+            'user_id' => 'nullable|exists:users,id',
+            'coupon_id' => 'nullable|exists:coupon_codes,id',
+            'currency_id' => 'required|exists:currencies,id'
         ];
+    }
+
+    public static function countOfProducts(int $index): int
+    {
+        $products = request('order.products');
+        $arr = [];
+        foreach ($products ?? [] as $product) {
+            $arr[$product['product_id']] = 0;
+            foreach ($products ?? [] as $value) {
+                if ($product['product_id'] == $value['product_id']) {
+                    $arr[$product['product_id']] += 1;
+                }
+            }
+        }
+        return $arr[$index] ?? 0;
     }
 }
