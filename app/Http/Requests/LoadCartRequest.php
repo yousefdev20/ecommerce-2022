@@ -25,7 +25,6 @@ class LoadCartRequest extends FormRequest
     {
         return [
             'cart.products.*.id' => 'nullable|exists:products,id',
-            'cart.currency.code' => 'required|exists:currencies,code_en'
         ];
     }
 }

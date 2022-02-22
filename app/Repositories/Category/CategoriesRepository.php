@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\Cache;
 
 class CategoriesRepository implements CategoriesRepositoryInterface
 {
-    public function __construct()
-    {
-    }
-
     public function get()
     {
         return Cache::rememberForever('categories', function () {

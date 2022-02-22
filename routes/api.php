@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Cart\CartController;
 use App\Http\Controllers\Deal\DealController;
 use App\Http\Controllers\Order\OrdersController;
-use \App\Http\Controllers\Product\ColorsController;
+use App\Http\Controllers\Product\ColorsController;
 use App\Http\Controllers\Product\ProductsController;
 use App\Http\Controllers\Category\CategoriesController;
 use App\Http\Controllers\Currency\CurrenciesController;
@@ -38,8 +38,5 @@ Route::group(['middleware' => ['throttle:60']], function () {
 
     Route::get('deals/latest/product', [DealController::class, 'latestDealProduct']);
 
-    Route::get('best/selling/product', [ProductsController::class, 'bestSelling']);
-
-    Route::get('cart', [CartController::class, 'bestSelling']);
-
+    Route::post('cart', [CartController::class, 'loadCart']);
 });

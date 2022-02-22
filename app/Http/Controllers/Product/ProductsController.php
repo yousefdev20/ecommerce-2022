@@ -133,8 +133,9 @@ class ProductsController extends Controller
             });
         }
         # Price [from-to]
-        if ($request->price) {
-            $products->where([['sale_price', '>=', $request->price->from], ['sale_price', '<=', $request->price->to]]);
+        if ($request->to) {
+            $products->whereBetween('sale_price', [$request->from ?? 0, $request->to]);
+//            $products->where([['sale_price', '>=', $request->from ?? 0], ['sale_price', '<=', $request->to ?? 10000]]);
         }
         return $this->response($products->simplePaginate(9));
     }
