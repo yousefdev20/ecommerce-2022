@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CountryController;
 use App\Http\Controllers\Deal\DealController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Product\ColorsController;
 use App\Http\Controllers\Auth\Admin\LoginController;
 use App\Http\Controllers\Product\ProductsController;
@@ -30,4 +32,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
     Route::resource('deals', DealController::class)->only('store', 'show');
 
     Route::resource('categories', CategoriesController::class);
+
+    Route::resource('admins', AdminController::class);
+
+    Route::resource('countries', CountryController::class);
 });

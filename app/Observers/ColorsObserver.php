@@ -2,13 +2,12 @@
 
 namespace App\Observers;
 
-use App\Models\Product\Color;
 use App\Repositories\Colors\ColorsInterface;
 use App\Repositories\IStorable;
 
 class ColorsObserver
 {
-    protected $colors;
+    protected IStorable $colors;
 
     /**
      * @param ColorsInterface $colors
@@ -21,10 +20,9 @@ class ColorsObserver
     /**
      * Handle the Color "created" event.
      *
-     * @param Color $color
      * @return void
      */
-    public function created(Color $color)
+    public function created()
     {
         $this->colors->refresh();
     }
@@ -32,10 +30,9 @@ class ColorsObserver
     /**
      * Handle the Color "updated" event.
      *
-     * @param  Color $color
      * @return void
      */
-    public function updated(Color $color)
+    public function updated()
     {
         $this->colors->refresh();
     }
@@ -43,31 +40,19 @@ class ColorsObserver
     /**
      * Handle the Color "deleted" event.
      *
-     * @param  Color $color
      * @return void
      */
-    public function deleted(Color $color)
+    public function deleted()
     {
         $this->colors->refresh();
     }
 
     /**
-     * Handle the Color "restored" event.
-     *
-     * @param  Color $color
-     * @return void
-     */
-    public function restored(Color $color)
-    {
-    }
-
-    /**
      * Handle the Color "force deleted" event.
      *
-     * @param  Color $color
      * @return void
      */
-    public function forceDeleted(Color $color)
+    public function forceDeleted()
     {
         $this->colors->refresh();
     }

@@ -14,7 +14,7 @@ class DealSeeder extends Seeder
      */
     public function run()
     {
-        Deal::query()->create(['expiration_date' => now()->addHours(10)])
+        Deal::query()->create(['expiration_date' => now()->addYear()])
             ->products()->sync([1,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
     }
 }

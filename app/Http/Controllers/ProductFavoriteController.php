@@ -2,85 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProductFavoriteRequest;
-use App\Http\Requests\UpdateProductFavoriteRequest;
-use App\Models\ProductFavorite;
+use App\Models\Product\Product;
+use Illuminate\Http\JsonResponse;
+use App\Models\Product\ProductFavorite;
 
 class ProductFavoriteController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        return $this->response(auth()->user()->load(['favorites']));
     }
 
     /**
-     * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Update function retrieve product it checks if product already stored on favorite
+     * if the response was true it shall delete from favorite.
      *
-     * @param  \App\Http\Requests\StoreProductFavoriteRequest  $request
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return JsonResponse
      */
-    public function store(StoreProductFavoriteRequest $request)
+    public function update(Product $product): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\ProductFavorite  $productFavorite
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ProductFavorite $productFavorite)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\ProductFavorite  $productFavorite
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ProductFavorite $productFavorite)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateProductFavoriteRequest  $request
-     * @param  \App\Models\ProductFavorite  $productFavorite
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateProductFavoriteRequest $request, ProductFavorite $productFavorite)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\ProductFavorite  $productFavorite
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(ProductFavorite $productFavorite)
-    {
-        //
+        $favoriteProduct = ProductFavorite::query();
+        $columns = ['user_id' => auth()->id(), 'product_id'=> $product?->id];
+        if ($favoriteProduct->where($columns)->exists()) {
+            $favoriteProduct->delete();
+        } else {
+            $favoriteProduct->insert($columns);
+        }
+        return $this->response(true);
     }
 }

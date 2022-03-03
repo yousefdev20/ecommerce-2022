@@ -3,6 +3,7 @@
 namespace App\Models\Product;
 
 use App\Models\Currency\Currency;
+use App\Models\Order\Order;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use \App\Http\Services\Facades\Currencies\Currency as FacadeCurrency;
@@ -33,9 +34,14 @@ class Product extends Model
         return ((FacadeCurrency::exchange($value) * 10) / 10);
     }
 
-    public function getRegularPriceAttribute($value)
+    public function getRegularPriceAttribute($value): float|int
     {
         return ((FacadeCurrency::exchange($value) * 100) / 100);
+    }
+
+    public function order()
+    {
+        return $this->belongsToMany(Product::class, 'order_product');
     }
 
     public function category()
@@ -66,5 +72,10 @@ class Product extends Model
     public function sizes()
     {
         return $this->hasMany(ProductSize::class);
+    }
+
+    public function favorite()
+    {
+        return $this->hasMany(ProductFavorite::class);
     }
 }

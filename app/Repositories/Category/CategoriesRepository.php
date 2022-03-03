@@ -3,7 +3,6 @@
 namespace App\Repositories\Category;
 
 use App\Models\Product\Category;
-use App\Repositories\IStorable;
 use Illuminate\Support\Facades\Cache;
 
 class CategoriesRepository implements CategoriesRepositoryInterface

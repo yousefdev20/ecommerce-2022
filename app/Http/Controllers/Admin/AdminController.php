@@ -7,6 +7,7 @@ use \Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAdminRequest;
 use App\Http\Requests\UpdateAdminRequest;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -28,7 +29,9 @@ class AdminController extends Controller
      */
     public function store(StoreAdminRequest $request): JsonResponse
     {
-        return $this->response(Admin::query()->create($request->validated()));
+        return $this->response(Admin::query()->create(
+            $request->validated()  + ['password' => Hash::make($request->password)])
+        );
     }
 
     /**

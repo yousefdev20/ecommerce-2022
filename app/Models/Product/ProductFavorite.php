@@ -9,6 +9,7 @@ class ProductFavorite extends Model
 {
     use HasFactory;
 
+    protected $with = ['product'];
     protected $fillable = ['user_id', 'product_id'];
 
     public function product()

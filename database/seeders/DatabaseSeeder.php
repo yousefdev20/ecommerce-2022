@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            ColorSeed::class, CurrencySeed::class, CategorySeed::class, AdminSeed::class, DealSeeder::class
+            ColorSeed::class, CurrencySeed::class, CategorySeed::class, AdminSeed::class, DealSeeder::class,
+            CountriesSeed::class
         ]);
     }
 }

@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Http\Services\Cart;
 use App\Repositories\Colors\Colors;
-use App\Repositories\Colors\ColorsInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Currencies\Currency;
+use App\Repositories\Colors\ColorsInterface;
 use App\Repositories\Currencies\CurrencyInterface;
 use App\Repositories\Category\CategoriesRepository;
+use App\Repositories\Countries\CountriesRepository;
+use App\Repositories\Countries\CountriesRepositoryInterface;
 use App\Repositories\Category\CategoriesRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
@@ -31,8 +34,16 @@ class AppServiceProvider extends ServiceProvider
             return new Colors();
         });
 
+        app()->bind(CountriesRepositoryInterface::class, function () {
+            return new CountriesRepository();
+        });
+
         app()->bind('Currency', function () {
             return new \App\Http\Services\Currency(new Currency());
+        });
+
+        app()->bind('Cart', function () {
+            return new Cart();
         });
     }
 

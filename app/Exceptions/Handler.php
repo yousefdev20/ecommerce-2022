@@ -2,7 +2,9 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Auth\CredentialsDosntMatch;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -36,6 +38,10 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        $this->renderable(function (CredentialsDosntMatch $exception, $request){
+            return Response::json(['data' => null, 'message' => 'These credentials do not match our records.'], 401);
         });
     }
 }
