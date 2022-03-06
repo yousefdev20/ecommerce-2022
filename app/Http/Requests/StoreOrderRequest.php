@@ -70,7 +70,7 @@ class StoreOrderRequest extends FormRequest
             'billing.email.required' => 'The email field is required.',
             'billing.town.required' => 'The town field is required.',
             'billing.street_address.required' => 'The street address field is required.',
-            'billing.state.required' => 'The first name field is required.',
+            'billing.state.required' => 'The state name field is required.',
             'billing.country_id.required' => 'The country field is required.',
             'billing.country_id.integer' => 'The country field shall be integer.',
         ];

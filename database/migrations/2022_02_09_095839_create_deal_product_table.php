@@ -15,7 +15,7 @@ class CreateDealProductTable extends Migration
     {
         Schema::create('deal_product', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('deal_id')->index();
+            $table->unsignedBigInteger('deal_id');
             $table->unsignedBigInteger('product_id')->index();
             $table->timestamps();
         });

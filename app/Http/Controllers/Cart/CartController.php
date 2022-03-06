@@ -24,7 +24,7 @@ class CartController extends Controller
         foreach ($products as $key => $value) {
             $quantity = $this->getProductQuantityFromRequest($request, $value->id);
             $products[$key]['total_price'] = $value->sale_price * $quantity;
-            $products[$key]['quantity'] = $quantity;
+            $products[$key]['qun'] = $quantity;
             $totalPrice += $value->sale_price * $quantity;
         }
         return $this->response([
@@ -37,7 +37,7 @@ class CartController extends Controller
     {
         foreach ($request?->cart['products'] ?? [] as $value) {
             if ($value['id'] == $id) {
-                return $value['quantity'];
+                return $value['qun'];
             }
         }
         return 1;

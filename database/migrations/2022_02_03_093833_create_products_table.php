@@ -14,7 +14,7 @@ class CreateProductsTable extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id();
+            $table->id()->index();
             $table->string('name_en');
             $table->string('name_ar');
             $table->float('regular_price')->nullable();

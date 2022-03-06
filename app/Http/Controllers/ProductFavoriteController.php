@@ -15,7 +15,7 @@ class ProductFavoriteController extends Controller
      */
     public function index(): JsonResponse
     {
-        return $this->response(auth()->user()->load(['favorites']));
+        return $this->response(auth()?->user()?->load('favorites.product'));
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth\User;
 
+use App\Models\Product\ProductFavorite;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +20,7 @@ class LoginController extends Controller
         if (!Auth::attempt($this->credentials($request))) {
             throw new CredentialsDosntMatch();
         }
-        $user = auth()->user();
+        $user = auth()->user()->load('favorites');
         $user['token'] = $user?->createToken('user')->plainTextToken;
 
         return $this->response($user);
