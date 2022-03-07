@@ -46,6 +46,7 @@ Route::group(['middleware' => ['throttle:60']], function () {
     Route::get('products/latest/{count}', [ProductsController::class, 'latestProduct']);
 
     Route::resource('orders', OrdersController::class)->only('store');
+    Route::get('user/order/tracking/{order}/{email}', [OrdersController::class, 'orderTracking']);
 
     Route::resource('deals', DealController::class)->only('show', 'index');
 

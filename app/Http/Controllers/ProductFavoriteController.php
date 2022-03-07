@@ -26,14 +26,14 @@ class ProductFavoriteController extends Controller
      * @param Product $product
      * @return JsonResponse
      */
-    public function update(Product $product): JsonResponse
+    public function update($productID): JsonResponse
     {
-        $favoriteProduct = ProductFavorite::query();
-        $columns = ['user_id' => auth()->id(), 'product_id'=> $product?->id];
-        if ($favoriteProduct->where($columns)->exists()) {
+        $favoriteProduct = ProductFavorite::query()->where('user_id', auth()->id())
+            ->where('product_id', $productID);
+        if ($favoriteProduct->first() ?? false) {
             $favoriteProduct->delete();
-        } else {
-            $favoriteProduct->insert($columns);
+        }else {
+            ProductFavorite::query()->insert(['user_id'=> auth()->id(), 'product_id'=> $productID]);
         }
         return $this->response(true);
     }

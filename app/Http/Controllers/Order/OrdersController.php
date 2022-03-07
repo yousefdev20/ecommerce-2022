@@ -38,7 +38,7 @@ class OrdersController extends Controller
             $billing_id = BillingAddress::query()->insertGetId($request->only(['billing'])['billing']);
             Order::query()->create(
                 $request->only(['currency_id', 'user_id', 'coupon_id', 'currency_id']) +
-                        [ 'amount' => 10, 'billing_address_id' => $billing_id]
+                [ 'amount' => 10, 'billing_address_id' => $billing_id]
             )->products()->attach($ids);
         });
         return $this->response($billing_id, 'success');
@@ -57,9 +57,12 @@ class OrdersController extends Controller
         }));
     }
 
-    public function userOrder()
+    /**
+     * @return JsonResponse
+     */
+    public function userOrder(): JsonResponse
     {
-        return $this->response(auth()->user()->load('orders'));
+        return $this->response(auth()?->user()?->load('orders'));
     }
 
     /**
@@ -97,5 +100,18 @@ class OrdersController extends Controller
         return $this->response(
             $order->load(['products', 'shippingAddress', 'billingAddress', 'coupon', 'workflow'])
         );
+    }
+
+    /**
+     * @param int $orderId
+     * @param string $email
+     * @return JsonResponse
+     */
+    public function orderTracking(int $order, string $email): JsonResponse
+    {
+        return $this->response(Order::query()
+            ->whereHas('billingAddress', function ($query) use ($email) {
+                $query->where('email', $email);
+            })->with(['workflow'])->find($order));
     }
 }
