@@ -13,7 +13,7 @@ class StoreWorkflowRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class StoreWorkflowRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'rank' => 'required|integer|unique:workflows,rank',
+            'name' => 'required|string|unique:workflows,name'
         ];
     }
 }

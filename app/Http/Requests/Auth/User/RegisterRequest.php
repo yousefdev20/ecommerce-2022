@@ -29,7 +29,7 @@ class RegisterRequest extends FormRequest
             'first_name' => 'required|max:20',
             'last_name' => 'required|max:20',
             'phone' => 'required|max:20|unique:users',
-            'email' => 'required|unique:users,email|email|max:30',
+            'email' => 'required|unique:users,email|email:dns|max:30',
             'password' => [
                 'required','confirmed','max:20',
                 Password::min(8)
@@ -37,8 +37,14 @@ class RegisterRequest extends FormRequest
                     ->mixedCase()
                     ->numbers()
                     ->symbols()
-                    ->uncompromised()
             ],
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'phone' => request('prefix').request('phone'),
+        ]);
     }
 }

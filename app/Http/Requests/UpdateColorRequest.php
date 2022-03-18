@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateColorRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class UpdateColorRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,9 @@ class UpdateColorRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name_en' => ['nullable', Rule::unique('colors')->ignore(request('id'))],
+            'name_ar' => ['nullable', Rule::unique('colors')->ignore(request('id'))],
+            'code' => ['nullable', Rule::unique('colors')->ignore(request('id'))],
         ];
     }
 }

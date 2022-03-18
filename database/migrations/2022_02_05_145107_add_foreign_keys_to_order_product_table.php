@@ -17,10 +17,12 @@ class AddForeignKeysToOrderProductTable extends Migration
             $table->foreign('order_id')
                 ->references('id')
                 ->on('orders')
+                ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->foreign('product_id')
                 ->references('id')
                 ->on('products')
+                ->cascadeOnDelete()
                 ->cascadeOnUpdate();
         });
     }

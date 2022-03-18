@@ -21,10 +21,15 @@ class Currency implements CurrencyInterface
         });
     }
 
-    public function find(string $code = 'USD')
+    public function find(string|null $code)
     {
-        return collect($this->get())->where('code_en', '=', $code)->first() ??
-            collect($this->get())->where('code_en', '=', 'USD')->first();
+        return collect($this->get())->where('code_en', '=', $code)->first() ?? null;
+    }
+
+    public function where(string $column = 'id', $value)
+    {
+        return collect($this->get())->where($column, '=', $value)->first() ??
+            collect($this->get())->where($column, '=', 'USD')->first();
     }
 
     public function delete()

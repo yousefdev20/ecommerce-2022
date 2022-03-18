@@ -22,7 +22,7 @@ class Colors implements ColorsInterface
         });
     }
 
-    public function find(string $name = '')
+    public function find(string|null $name)
     {
         return collect($this->get())->where('name', '=', $name)->first() ??
             collect($this->get())->where('name', '=', 'red')->first();
@@ -37,5 +37,10 @@ class Colors implements ColorsInterface
     {
         $this->delete();
         $this->store();
+    }
+
+    public function where(string $column = 'id', $value)
+    {
+        // TODO: Implement where() method.
     }
 }

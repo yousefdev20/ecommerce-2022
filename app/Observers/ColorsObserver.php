@@ -12,7 +12,7 @@ class ColorsObserver
     /**
      * @param ColorsInterface $colors
      */
-    public function __construct(IStorable $colors)
+    public function __construct(ColorsInterface $colors)
     {
         $this->colors = $colors;
     }

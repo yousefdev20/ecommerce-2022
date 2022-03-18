@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Category;
 
 use App\Models\Product\Category;
-use App\Models\Product\Product;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
@@ -53,7 +52,7 @@ class CategoriesController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
-        return $this->response($category::query()->update($request->validated()));
+        return $this->response($category->update($request->validated()));
     }
 
     /**

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Auth\User;
 
-use App\Models\Product\ProductFavorite;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -46,9 +44,7 @@ class LoginController extends Controller
     private function credentials(LoginRequest $request): array
     {
         $username = $this->username();
-//        if ($username === 'email') {
-//            return [$username => Crypt::encryptString($request?->username), 'password' => $request?->password];
-//        }
+
         return [$username => $request?->username, 'password' => $request?->password];
     }
 }

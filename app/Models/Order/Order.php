@@ -2,6 +2,7 @@
 
 namespace App\Models\Order;
 
+use App\Models\Currency\Currency;
 use App\Models\Product\Product;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +12,7 @@ class Order extends Model
 {
     use HasFactory;
 
+    protected $with = ['currency'];
     protected $fillable = [
         'user_id', 'workflow_id', 'coupon_id', 'currency_id',
         'shipping_address_id', 'billing_address_id',
@@ -25,6 +27,11 @@ class Order extends Model
     public function user() {
 
         return $this->belongsTo(User::class);
+    }
+
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
     }
 
     public function workflow() {

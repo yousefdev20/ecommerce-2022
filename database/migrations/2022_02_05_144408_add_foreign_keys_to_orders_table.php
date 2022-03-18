@@ -17,26 +17,32 @@ class AddForeignKeysToOrdersTable extends Migration
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
+                ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->foreign('workflow_id')
                 ->references('id')
                 ->on('workflows')
+                ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->foreign('coupon_id')
                 ->references('id')
                 ->on('coupon_codes')
+                ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->foreign('currency_id')
                 ->references('id')
                 ->on('currencies')
+                ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->foreign('shipping_address_id')
                 ->references('id')
                 ->on('shipping_addresses')
+                ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->foreign('billing_address_id')
                 ->references('id')
                 ->on('billing_addresses')
+                ->cascadeOnDelete()
                 ->cascadeOnUpdate();
         });
     }
