@@ -7,6 +7,8 @@ use App\Http\Requests\StoreDealRequest;
 use App\Http\Requests\UpdateDealRequest;
 use App\Models\Deal\Deal;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DealController extends Controller
 {
@@ -20,6 +22,13 @@ class DealController extends Controller
         return $this->response(Deal::query()->with(['products'])->get());
     }
 
+    public function dealForThisWeek(): JsonResponse
+    {
+        return $this->response(Deal::query()->thisWeek()->with(['products' => function($query) {
+            return $query->limit(8);
+        }])->first());
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -28,8 +37,9 @@ class DealController extends Controller
      */
     public function store(StoreDealRequest $request): JsonResponse
     {
-        return $this->response(Deal::query()
-            ->updateOrInsert(['expiration_date', $request->expiration_date], $request->validated())
+        return $this->response(
+            Deal::create($request->only('expiration_date'))
+                ->products()->sync((array_values($request->product_id ?? [])))
         );
     }
 
@@ -41,7 +51,7 @@ class DealController extends Controller
      */
     public function show(Deal $deal): JsonResponse
     {
-        return $this->response($deal->load(['latestDealProduct']));
+        return $this->response($deal->load('products'));
     }
 
     /**
@@ -53,9 +63,13 @@ class DealController extends Controller
      */
     public function update(UpdateDealRequest $request, Deal $deal): JsonResponse
     {
-        return $this->response(Deal::query()
-            ->updateOrInsert(['expiration_date', $request->expiration_date], $request->validated())
-        );
+        DB::transaction(function () use ($deal, $request) {
+            $deal->update($request->only('expiration_date'));
+            $deal->products()->detach();
+            $deal->products()->sync((array_values($request->product_id ?? [])));
+
+        });
+        return $this->response($deal);
     }
 
     /**

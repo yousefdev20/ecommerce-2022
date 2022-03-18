@@ -46,13 +46,13 @@ class ColorsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  UpdateColorRequest  $request
-     * @param  Color  $color
+     * @param UpdateColorRequest $request
+     * @param Color $color
      * @return JsonResponse
      */
     public function update(UpdateColorRequest $request, Color $color): JsonResponse
     {
-        return $this->response($color::query()->update($request->validated()));
+        return $this->response($color->update($request->validated()));
     }
 
     /**

@@ -41,7 +41,12 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (CredentialsDosntMatch $exception, $request){
-            return Response::json(['data' => null, 'message' => 'These credentials do not match our records.'], 401);
+            return Response::json(['data' => null, 'message' => 'These credentials do not match our records.'], 422);
+        });
+
+        $this->renderable(function (DefaultCurrencyDosntExist $exception, $request){
+            return Response::json(['data' => null, 'message' => 'The default currency dos`nt exist, search on it
+            via currency config file and matched on database'], 422);
         });
     }
 }

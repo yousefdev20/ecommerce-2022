@@ -8,7 +8,7 @@ use App\Repositories\Category\CategoriesRepositoryInterface;
 
 class CategoryObserver
 {
-    public CategoriesRepositoryInterface $categoriesRepository;
+    public $categoriesRepository;
 
     public function __construct(CategoriesRepositoryInterface $categoriesRepository)
     {

@@ -25,7 +25,7 @@ class CurrencyObserver
      */
     public function created(Currency $currency)
     {
-//        $this->currencies->
+        $this->currencies->refresh();
     }
 
     /**
@@ -36,7 +36,7 @@ class CurrencyObserver
      */
     public function updated(Currency $currency)
     {
-        //
+        $this->currencies->refresh();
     }
 
     /**
@@ -47,7 +47,7 @@ class CurrencyObserver
      */
     public function deleted(Currency $currency)
     {
-        //
+        $this->currencies->refresh();
     }
 
     /**

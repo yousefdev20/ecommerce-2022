@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\DB;
 
 class OrdersController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->only('show');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,28 +38,36 @@ class OrdersController extends Controller
     public function store(StoreOrderRequest $request): JsonResponse
     {
         $billing_id = null;
-        DB::transaction(function () use ($request) {
-            $ids = ($request->order['products']);
+        $count = 0;
+        $ids = ($request->order['products']);
+        foreach ($ids as $id) {
+            $count += Product::query()->find($id)
+                ->first()->sale_price;
+        }
+        DB::transaction(function () use ($request, $count, $ids) {
             $billing_id = BillingAddress::query()->insertGetId($request->only(['billing'])['billing']);
             Order::query()->create(
-                $request->only(['currency_id', 'user_id', 'coupon_id', 'currency_id']) +
-                [ 'amount' => 10, 'billing_address_id' => $billing_id]
+                $request->only(['currency_id', 'user_id', 'coupon_id']) +
+                [ 'amount' => $count, 'billing_address_id' => $billing_id]
             )->products()->attach($ids);
         });
         return $this->response($billing_id, 'success');
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified resource (user).
      *
      * @param Order $order
      * @return JsonResponse
      */
     public function show(Order $order): JsonResponse
     {
-        return $this->response(auth()->user()->load('orders', function ($query) use ($order) {
-            return $query->where('id', $order->id);
-        }));
+        return $this->response(
+            $order->load(['products' => function ($query) {
+                return $query->groupBy('products.id')
+                    ->selectRaw('products.*, count(products.id) as count, sum(products.sale_price) as sum_sale_price')
+                    ->get();
+        }]));
     }
 
     /**
@@ -113,5 +126,22 @@ class OrdersController extends Controller
             ->whereHas('billingAddress', function ($query) use ($email) {
                 $query->where('email', $email);
             })->with(['workflow'])->find($order));
+    }
+
+    /**
+     * Display the specified resource (admin).
+     *
+     * @param Order $order
+     * @return JsonResponse
+     */
+    public function orderDetails(Order $order): JsonResponse
+    {
+        return $this->response(
+            $order->load(['coupon', 'shippingAddress', 'billingAddress', 'user', 'products' => function ($query) {
+            return $query->groupBy('products.id')
+                ->selectRaw('products.*, count(products.id) as count, sum(products.sale_price) as sum_sale_price')
+                ->get();
+        }])
+        );
     }
 }

@@ -17,10 +17,12 @@ class AddForeignKeysToProductColorTable extends Migration
             $table->foreign('product_id')
                 ->references('id')
                 ->on('products')
+                ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->foreign('color_id')
                 ->references('id')
                 ->on('colors')
+                ->cascadeOnDelete()
                 ->cascadeOnUpdate();
         });
     }

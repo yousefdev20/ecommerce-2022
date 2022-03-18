@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateCurrencyRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class UpdateCurrencyRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,11 @@ class UpdateCurrencyRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name_en' => ['nullable', Rule::unique('currencies')->ignore(request('id'))],
+            'name_ar' => ['nullable', Rule::unique('currencies')->ignore(request('id'))],
+            'code_ar' => ['nullable', Rule::unique('currencies')->ignore(request('id'))],
+            'code_en' => ['nullable', Rule::unique('currencies')->ignore(request('id'))],
+            'exchange' => 'nullable|numeric',
         ];
     }
 }

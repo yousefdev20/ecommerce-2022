@@ -24,7 +24,16 @@ class UpdateDealRequest extends FormRequest
     public function rules()
     {
         return [
-            'expiration_date' => 'required|date'
+            'expiration_date' => 'nullable|date',
+            'product_id' => 'array|required|min:1',
+            'product_id.*' => ['nullable','exists:products,id']
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'expiration_date' => date('Y-m-d H:i:s', strtotime(request('expiration_date'))),
+        ]);
     }
 }

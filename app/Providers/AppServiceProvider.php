@@ -4,13 +4,17 @@ namespace App\Providers;
 
 use App\Http\Services\Cart;
 use App\Repositories\Colors\Colors;
+use App\Repositories\Products\TopSelling\TopSellingProductInterface;
+use App\Repositories\Products\TopSelling\TopSellingProductRepositories;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Currencies\Currency;
 use App\Repositories\Colors\ColorsInterface;
 use App\Repositories\Currencies\CurrencyInterface;
-use App\Repositories\Category\CategoriesRepository;
 use App\Repositories\Countries\CountriesRepository;
+use App\Repositories\Category\CategoriesRepository;
+use App\Repositories\Exclusives\ExclusiveRepository;
 use App\Repositories\Countries\CountriesRepositoryInterface;
+use App\Repositories\Exclusives\ExclusivesRepositoryInterface;
 use App\Repositories\Category\CategoriesRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,6 +32,14 @@ class AppServiceProvider extends ServiceProvider
 
         app()->bind(CategoriesRepositoryInterface::class, function () {
             return new CategoriesRepository();
+        });
+
+        app()->bind(ExclusivesRepositoryInterface::class, function () {
+            return new ExclusiveRepository();
+        });
+
+        app()->bind(TopSellingProductInterface::class, function () {
+            return new TopSellingProductRepositories();
         });
 
         app()->bind(ColorsInterface::class, function () {

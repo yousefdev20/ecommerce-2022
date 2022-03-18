@@ -3,11 +3,15 @@
 namespace App\Providers;
 
 use App\Models\Country;
+use App\Models\Currency\Currency;
 use App\Models\Product\Category;
 use App\Models\Product\Color;
+use App\Models\Product\ExclusiveProduct;
 use App\Observers\CategoryObserver;
 use App\Observers\ColorsObserver;
 use App\Observers\CountryObserver;
+use App\Observers\CurrencyObserver;
+use App\Observers\ExclusiveProductObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -33,8 +37,10 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Category::observe(CategoryObserver::class);
         Color::observe(ColorsObserver::class);
         Country::observe(CountryObserver::class);
+        Currency::observe(CurrencyObserver::class);
+        Category::observe(CategoryObserver::class);
+        ExclusiveProduct::observe(ExclusiveProductObserver::class);
     }
 }

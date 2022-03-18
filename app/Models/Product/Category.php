@@ -29,7 +29,7 @@ class Category extends Model
 
     public function scopeDoseNotHaveParent($query)
     {
-        $query->where([['parent_id', '=', null], ['level', '=', 1]]);
+//        $query->where([['parent_id', '=', null], ['level', '=', 1]]);
     }
 
 }

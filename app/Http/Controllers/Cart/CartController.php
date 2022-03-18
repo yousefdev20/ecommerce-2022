@@ -18,7 +18,7 @@ class CartController extends Controller
     public function loadCart(LoadCartRequest $request): JsonResponse
     {
         $products = Product::query()
-            ->select(['id', 'name_ar', 'name_en', 'sale_price', 'image'])
+            ->select(['id', 'name_ar', 'name_en', 'sale_price', 'image', 'currency_id'])
             ->find(array_column($request?->cart['products'], 'id'));
         $totalPrice = 0;
         foreach ($products as $key => $value) {
