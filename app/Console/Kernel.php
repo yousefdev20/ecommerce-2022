@@ -2,10 +2,13 @@
 
 namespace App\Console;
 
+use App\Jobs\Categories\TopSellingCategoriesJob;
 use App\Jobs\Products\TopSellingProductJob;
+use App\Repositories\Category\CategoriesRepository;
 use App\Repositories\Products\TopSelling\TopSellingProductRepositories;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -18,9 +21,13 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $topProducts = new TopSellingProductRepositories();
+        $topCategories = new CategoriesRepository();
         // $schedule->command('inspire')->hourly();
-        $schedule->job(new TopSellingProductJob($topProducts))->everyMinute();
+        $schedule->call(function () {
+           Log::info('test', ['just test']);
+        })->everyMinute();
         $schedule->job(new TopSellingProductJob($topProducts))->everyTenMinutes();
+        $schedule->job(new TopSellingCategoriesJob($topCategories))->everyTenMinutes();
     }
 
     /**

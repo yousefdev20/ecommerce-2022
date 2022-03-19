@@ -1,29 +1,29 @@
 <?php
 
-namespace App\Jobs\Products;
+namespace App\Jobs\Categories;
 
-use App\Repositories\Products\TopSelling\TopSellingProductRepositories;
+use App\Repositories\Category\CategoriesRepositoryInterface;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
-class TopSellingProductJob implements ShouldQueue
+class TopSellingCategoriesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public TopSellingProductRepositories $products;
+    public CategoriesRepositoryInterface $categories;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($products)
+    public function __construct($categories)
     {
-        $this->products = $products;
-        $this->products->refresh();
+        $this->categories = $categories;
+        $this->categories->refreshTopSelling();
     }
 
     /**
@@ -33,6 +33,6 @@ class TopSellingProductJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->products->refresh();
+        $this->categories->refreshTopSelling();
     }
 }

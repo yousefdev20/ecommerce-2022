@@ -62,6 +62,7 @@ Route::group(['middleware' => ['throttle:60']], function () {
     Route::resource('currencies', CurrenciesController::class)->only('show', 'index');
 
     Route::resource('categories', CategoriesController::class)->only('show', 'index');
+    Route::get('categories/top/selling', [CategoriesController::class, 'topSelling']);
 
     Route::resource('countries', CountryController::class)->only('index', 'show');
 

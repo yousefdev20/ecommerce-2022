@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Category;
 
 use App\Models\Product\Category;
+use App\Repositories\Products\TopSelling\TopSellingProductInterface;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Repositories\Category\CategoriesRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class CategoriesController extends Controller
 {
@@ -29,7 +31,8 @@ class CategoriesController extends Controller
      */
     public function store(StoreCategoryRequest $request): JsonResponse
     {
-        return $this->response(Category::query()->create($request->validated()));
+        $path = $request->file('image')->store('public/categories/' . date('Y-m-d'));
+        return $this->response(Category::query()->create($request->except('image') + ['image' => $path]));
     }
 
     /**
@@ -68,5 +71,14 @@ class CategoriesController extends Controller
             return $this->response([], 'this object has relationship', 422);
         }
         return $this->response($category->delete());
+    }
+
+    /**
+     * @param CategoriesRepositoryInterface $categories
+     * @return JsonResponse
+     */
+    public function topSelling(CategoriesRepositoryInterface $categories): JsonResponse
+    {
+        return $this->response($categories->topSelling());
     }
 }

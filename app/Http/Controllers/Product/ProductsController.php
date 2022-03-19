@@ -8,6 +8,7 @@ use App\Repositories\Products\TopSelling\TopSellingProductInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Product\ProductDescription;
@@ -208,20 +209,6 @@ class ProductsController extends Controller
     public function latestProduct(int $count = 8): JsonResponse
     {
         return $this->response(Product::query()->inStock()->latest()->with(['currency'])->limit($count)->get());
-    }
-
-    /**
-     * get the latest (8) product from storage.
-     *
-     * @return JsonResponse
-     */
-    public function bestSelling(int $count = 8): JsonResponse
-    {
-        $products = DB::table('order_product')
-            ->where('quantity', '>=', 1)
-            ->select(DB::raw('count(product_id) as count, product_id'))
-            ->limit($count)->get();
-        return $this->response($products);
     }
 
     /**

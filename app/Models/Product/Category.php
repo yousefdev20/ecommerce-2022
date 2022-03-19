@@ -32,4 +32,14 @@ class Category extends Model
 //        $query->where([['parent_id', '=', null], ['level', '=', 1]]);
     }
 
+    public function setImageAttribute($value)
+    {
+        $this->attributes['image'] = str_replace('public', 'storage', $value);
+    }
+
+    public function getImageAttribute($value): null|string|\Illuminate\Contracts\Routing\UrlGenerator|\Illuminate\Contracts\Foundation\Application
+    {
+        return $value ? url($value ?? '') : null;
+    }
+
 }

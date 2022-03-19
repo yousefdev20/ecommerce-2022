@@ -12,7 +12,7 @@ class StoreCategoryRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -27,7 +27,7 @@ class StoreCategoryRequest extends FormRequest
         return [
             'name_ar' => 'required|unique:categories',
             'name_en' => 'required|unique:categories',
-            'image' => 'nullable',
+            'image' => 'required|mimes:png|max:2048|dimensions:min_width=100,min_height=200',
             'parent_id' => Rule::when(request('parent_id') ?? false, ['exists:categories,id'])
         ];
     }
