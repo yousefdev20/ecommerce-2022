@@ -16,9 +16,13 @@ class CreateProductFavoritesTable extends Migration
         Schema::create('product_favorites', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->index()
-                ->references('id')->on('users');
+                ->references('id')->on('users')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->foreignId('product_id')->index()
-                ->references('id')->on('products');
+                ->references('id')->on('products')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }

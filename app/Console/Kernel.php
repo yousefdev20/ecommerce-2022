@@ -3,6 +3,10 @@
 namespace App\Console;
 
 use App\Jobs\Categories\TopSellingCategoriesJob;
+use App\Jobs\DailyReportJob;
+use App\Jobs\DangerQuantityProductJob;
+use App\Jobs\DeleteInactiveDealJob;
+use App\Jobs\DeleteInactiveExclusiveJob;
 use App\Jobs\Products\TopSellingProductJob;
 use App\Repositories\Category\CategoriesRepository;
 use App\Repositories\Products\TopSelling\TopSellingProductRepositories;
@@ -20,14 +24,21 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $topProducts = new TopSellingProductRepositories();
+        /**
+         * start composition section.
+         */
         $topCategories = new CategoriesRepository();
-        // $schedule->command('inspire')->hourly();
-        $schedule->call(function () {
-           Log::info('test', ['just test']);
-        })->everyMinute();
-        $schedule->job(new TopSellingProductJob($topProducts))->everyTenMinutes();
+        $topProducts = new TopSellingProductRepositories();
+
+        /**
+         * start schedule section.
+         */
         $schedule->job(new TopSellingCategoriesJob($topCategories))->everyTenMinutes();
+        $schedule->job(new TopSellingProductJob($topProducts))->everyTenMinutes();
+        $schedule->job(new DeleteInactiveExclusiveJob())->dailyAt('23:59');
+        $schedule->job(new DeleteInactiveDealJob())->dailyAt('23:59');
+        $schedule->job(new DangerQuantityProductJob())->everyTenMinutes();
+        $schedule->job(new DailyReportJob())->everyMinute();
     }
 
     /**

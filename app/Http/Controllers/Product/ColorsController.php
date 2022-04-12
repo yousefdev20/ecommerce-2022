@@ -14,6 +14,7 @@ class ColorsController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param ColorsInterface $colors
      * @return JsonResponse
      */
     public function index(ColorsInterface $colors): JsonResponse

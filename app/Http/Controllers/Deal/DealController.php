@@ -19,13 +19,13 @@ class DealController extends Controller
      */
     public function index(): JsonResponse
     {
-        return $this->response(Deal::query()->with(['products'])->get());
+        return $this->response(Deal::query()->get());
     }
 
     public function dealForThisWeek(): JsonResponse
     {
         return $this->response(Deal::query()->thisWeek()->with(['products' => function($query) {
-            return $query->limit(8);
+            return $query->inStock()->limit(8);
         }])->first());
     }
 
@@ -51,7 +51,9 @@ class DealController extends Controller
      */
     public function show(Deal $deal): JsonResponse
     {
-        return $this->response($deal->load('products'));
+        return $this->response($deal?->load(['products' => function($query) {
+            return $query->inStock()->get();
+        }]));
     }
 
     /**
@@ -80,7 +82,7 @@ class DealController extends Controller
      */
     public function destroy(Deal $deal): JsonResponse
     {
-        return $this->response($deal::query()->delete());
+        return $this->response($deal->delete());
     }
 
     /**

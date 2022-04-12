@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
@@ -16,7 +17,7 @@ class UsersController extends Controller
     }
 
     /**
-     * @param User $user
+     * @param $id
      * @return JsonResponse
      */
     public function unblock($id): JsonResponse
@@ -31,6 +32,16 @@ class UsersController extends Controller
     public function show(User $user): JsonResponse
     {
         return $this->response($user);
+    }
+
+    /**
+     * @param User $user
+     * @param UpdateUserRequest $request
+     * @return JsonResponse
+     */
+    public function update(User $user, UpdateUserRequest $request): JsonResponse
+    {
+        return $this->response($user->update($request->validated()));
     }
 
     /**

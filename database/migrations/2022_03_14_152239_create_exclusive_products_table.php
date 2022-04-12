@@ -15,7 +15,10 @@ class CreateExclusiveProductsTable extends Migration
     {
         Schema::create('exclusive_products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->references('id')->on('products');
+            $table->foreignId('product_id')
+                ->references('id')->on('products')
+            ->cascadeOnDelete()
+            ->cascadeOnUpdate();
             $table->timestamp('expiration_date');
             $table->timestamps();
         });

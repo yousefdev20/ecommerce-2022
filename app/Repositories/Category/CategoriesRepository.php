@@ -63,4 +63,14 @@ class CategoriesRepository implements CategoriesRepositoryInterface
             ->get()->toArray();
         return array_values(array_column($data, 'id'));
     }
+
+    public function find(?string $name)
+    {
+        // TODO: Implement find() method.
+    }
+
+    public function where(string $column = 'id', $value)
+    {
+        return collect($this->get())->where($column, $value)->first();
+    }
 }

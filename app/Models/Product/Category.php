@@ -32,6 +32,11 @@ class Category extends Model
 //        $query->where([['parent_id', '=', null], ['level', '=', 1]]);
     }
 
+    public function scopeHasProducts($query)
+    {
+        $query->has('products');
+    }
+
     public function setImageAttribute($value)
     {
         $this->attributes['image'] = str_replace('public', 'storage', $value);

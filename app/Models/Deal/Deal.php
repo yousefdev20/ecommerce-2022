@@ -16,7 +16,7 @@ class Deal extends Model
 
     public function getStatusAttribute(): bool
     {
-        return $this->expiration_date > Carbon::now()->endOfWeek()->format('Y-m-d H:i:s');
+        return $this->expiration_date > now();
     }
 
     public function products()

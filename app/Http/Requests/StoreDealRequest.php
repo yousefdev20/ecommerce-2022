@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\HaveValidDealRule;
 use App\Rules\QuantityIsEnough;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -26,7 +27,7 @@ class StoreDealRequest extends FormRequest
     public function rules()
     {
         return [
-            'expiration_date' => 'required|date',
+            'expiration_date' => ['required','date', new HaveValidDealRule()],
             'product_id' => 'array|required',
             'product_id.*' => ['required','exists:products,id']
         ];

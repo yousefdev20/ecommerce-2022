@@ -46,7 +46,7 @@ class Currency
         }
 
         $currency = $this->currency->where('id', $currency);
-        return (($value / $currency->exchange) * $this->currentCurrency?->exchange ?? 0);
+        return (($value / $currency?->exchange) * $this->currentCurrency?->exchange ?? 0);
     }
 
     public function id(): int|null

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Http\Requests\CSVUploaderRequest;
+use App\Imports\ProductsImport;
 use App\Models\Product\Product;
 use App\Models\Slider;
 use App\Repositories\Products\TopSelling\TopSellingProductInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -15,6 +16,7 @@ use App\Models\Product\ProductDescription;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductsController extends Controller
 {
@@ -55,7 +57,9 @@ class ProductsController extends Controller
             /**
              * Here the data it will be stored inside Products records.
              */
-            $data = [$request->except(['description_ar', 'description_en', 'image_description', 'image']) + ['image' => $path]];
+            $data = [$request->only(['name_ar', 'name_en', 'regular_price', 'sale_price',
+                    'quantity', 'currency_id', 'category_id', 'sale_unit', 'kg', 'pieces'
+                ]) + ['image' => $path]];
             /**
              * handel the image details for each item (product)
              */
@@ -67,7 +71,8 @@ class ProductsController extends Controller
             /**
              * store description and product
              */
-            $product_description = $product_description->create($request->only(['description_ar', 'description_en']));
+            $product_description = $product_description->create($request->product_description);
+
             $product = $product->create($data[0] + ['product_description_id' => $product_description->id]);
             /**
              * store product details (images)
@@ -90,6 +95,18 @@ class ProductsController extends Controller
             if ($request?->slider === 'true' ?? true) {
                 $product?->slider()?->create();
             }
+
+            if (($request->sale_unit ?? -1) == 3) {
+                $product->package()->create()->items()->createMany($request->package_items ?? []);
+            }
+
+            if ($request?->sizes_id ?? false) {
+                $product->sizes()->delete();
+                foreach ($request?->sizes_id ?? [] as $item) {
+                    $product?->sizes()->create(['size' => $item]);
+                }
+            }
+
         });
 
         /**
@@ -107,7 +124,12 @@ class ProductsController extends Controller
     public function show(Product $product): JsonResponse
     {
         return $this->response(
-            $product->load(['sizes', 'images', 'colors', 'description', 'category', 'currency', 'slider'])
+            $product?->load([
+                'sizes', 'images', 'colors', 'description', 'category', 'currency', 'slider', 'package', 'description',
+                'reviews' => function($query) {
+                    return $query->with(['user:id,first_name,last_name'])->latest()->limit(5);
+                }
+            ])
         );
     }
 
@@ -130,8 +152,8 @@ class ProductsController extends Controller
              * Here the data it will be stored inside Products records.
              */
             $data = [$request->only(['name_ar', 'name_en', 'regular_price', 'sale_price',
-                'quantity', 'currency_id', 'category_id'
-                ])];
+                'quantity', 'currency_id', 'category_id', 'sale_unit', 'kg', 'pieces'
+            ])];
             /**
              * store product image.
              */
@@ -153,8 +175,7 @@ class ProductsController extends Controller
              */
             $product->update($data[0]);
 
-            $product->description()
-                ->update($request->only(['description_ar', 'description_en']));
+            $product->description()->update($request->product_description);
             /**
              * store product details (images)
              */
@@ -180,6 +201,18 @@ class ProductsController extends Controller
             } else {
                 $product?->slider()?->delete();
             }
+
+            if (($request?->sale_unit ?? -1) == 3) {
+                $product->package_items()->delete();
+                $product->package()->firstOrCreate()->items()->createMany($request?->package_items ?? []);
+            }
+
+            if ($request?->sizes_id ?? false) {
+                $product->sizes()->delete();
+                foreach ($request?->sizes_id ?? [] as $item) {
+                    $product?->sizes()->create(['size' => $item]);
+                }
+            }
         });
 
         /**
@@ -196,8 +229,12 @@ class ProductsController extends Controller
      */
     public function destroy(Product $product): JsonResponse
     {
-        Storage::delete($product->image);
-        Storage::delete($product->load(['images']));
+        /**
+         * !Delete a main image
+         * Delete an image description.
+         */
+        Storage::delete($product?->image);
+        Storage::delete($product?->load(['images']));
         return $this->response($product->delete());
     }
 
@@ -219,6 +256,9 @@ class ProductsController extends Controller
      */
     public function getProducts(Request $request): JsonResponse
     {
+        /**
+         * Load Products based on filter (categorisation).
+         */
         $products = Product::query()->inStock();
 
         # Category
@@ -231,6 +271,12 @@ class ProductsController extends Controller
         if ($request->color) {
             $products->with(['colors'])->whereHas('colors', function ($query) use ($request) {
                 $query->where('color_id', $request->color);
+            });
+        }
+        # Size
+        if ($request->size) {
+            $products->with(['sizes'])->whereHas('sizes', function ($query) use ($request) {
+                $query->where('size', $request->size);
             });
         }
         # Price [from-to]
@@ -247,11 +293,35 @@ class ProductsController extends Controller
 
     public function slider(): JsonResponse
     {
-        return $this->response(Slider::query()->with(['product.description'])->get());
+        return $this->response(Slider::query()->with(['product' => function($query) {
+            return $query->inStock()->with(['description']);
+        }])->whereHas('product')->get());
     }
 
-    public function search(string $search): JsonResponse
+    public function search(string $search, int|null $page = null): JsonResponse
     {
-        return $this->response(Product::query()->inStock()->where('name_en', 'LIKE', '%' . $search . '%')->get());
+        $query = Product::query()->inStock()->where('name_en', 'LIKE', '%' . $search . '%');
+        $products = $page ? $query->simplePaginate($page) : $query->get();
+        return $this->response($products);
+    }
+
+    public function dangerQuantityProduct(): JsonResponse
+    {
+        return $this->response(Cache::get('danger_quantity_product'));
+    }
+
+    public function uploadCSVFile(CSVUploaderRequest $request)
+    {
+        Excel::import(new ProductsImport(), $request->file);
+    }
+
+    public function units(): JsonResponse
+    {
+        return $this->response(config('product.units'));
+    }
+
+    public function sizes(): JsonResponse
+    {
+        return $this->response(config('product.sizes'));
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product\ExclusiveProduct;
 use App\Http\Requests\StoreExclusiveProductRequest;
 use App\Http\Requests\UpdateExclusiveProductRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ExclusiveProductController extends Controller
 {
@@ -17,7 +18,10 @@ class ExclusiveProductController extends Controller
      */
     public function index(): JsonResponse
     {
-        return $this->response(ExclusiveProduct::all());
+        if (Auth::guard('admin')->user() ?? false) {
+            return $this->response(ExclusiveProduct::query()->whereHas('product')->get());
+        }
+        return $this->response(ExclusiveProduct::query()->active()->whereHas('product')->get());
     }
 
     /**

@@ -20,9 +20,12 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('coupon_id')->nullable();
             $table->unsignedBigInteger('currency_id')->index();
             $table->unsignedBigInteger('shipping_address_id')->nullable();
-            $table->unsignedBigInteger('billing_address_id')->index();
+            $table->unsignedBigInteger('billing_address_id')->nullable();
             $table->float('amount');
             $table->enum('paid_status', [0, 1])->default(0);
+            $table->enum('status', [1, 2, 3, 4, 5, 6, 7])->default(1);
+            $table->text('note')->nullable();
+            $table->text('admin_note')->nullable();
             $table->timestamps();
         });
     }

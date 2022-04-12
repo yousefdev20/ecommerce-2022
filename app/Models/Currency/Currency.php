@@ -16,4 +16,9 @@ class Currency extends Model
 
         return $this->hasMany(Product::class);
     }
+
+    public function scopeHasProducts($query)
+    {
+        $query->has('products');
+    }
 }

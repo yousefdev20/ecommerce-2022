@@ -32,15 +32,17 @@ class StoreOrderRequest extends FormRequest
             'billing.first_name' => 'required',
             'billing.last_name' => 'required',
             'billing.phone' => 'required',
-            'billing.email' => 'required',
+            'billing.email' => 'required|email|email:dns|max:50',
             'billing.town' => 'required',
             'billing.company_name' => 'nullable',
             'billing.street_address' => 'required',
             'billing.state' => 'required',
             'billing.zip' => 'nullable',
-            'billing.note' => 'nullable',
             'billing.country_id' => 'required|integer',
             'billing.user_id' => 'nullable',
+            'billing.longitude' => 'nullable',
+            'billing.latitude' => 'nullable',
+            'note' => 'nullable',
             'user_id' => 'nullable|exists:users,id',
             'coupon_id' => 'nullable|exists:coupon_codes,id',
             'currency_id' => 'required|exists:currencies,id'
@@ -52,9 +54,9 @@ class StoreOrderRequest extends FormRequest
         $products = request('order.products');
         $arr = [];
         foreach ($products ?? [] as $product) {
-            $arr[$product['product_id']] = 0;
+            $arr[$product['id']] = 0;
             foreach ($products ?? [] as $value) {
-                if ($product['product_id'] == $value['product_id']) {
+                if ($product['id'] == $value['product_id']) {
                     $arr[$product['product_id']] += 1;
                 }
             }

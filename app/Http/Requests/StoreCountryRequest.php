@@ -24,7 +24,10 @@ class StoreCountryRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name_en' => 'required|unique:countries,name_en',
+            'name_ar' => 'required|unique:countries,name_ar',
+            'code_en' => 'required|unique:countries,code_en',
+            'code_ar' => 'required|unique:countries,code_ar',
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\HaveValidDealRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateDealRequest extends FormRequest
@@ -24,9 +25,9 @@ class UpdateDealRequest extends FormRequest
     public function rules()
     {
         return [
-            'expiration_date' => 'nullable|date',
+            'expiration_date' => ['required', 'date', new HaveValidDealRule()],
             'product_id' => 'array|required|min:1',
-            'product_id.*' => ['nullable','exists:products,id']
+            'product_id.*' => ['nullable', 'exists:products,id']
         ];
     }
 

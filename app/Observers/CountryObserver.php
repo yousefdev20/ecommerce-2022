@@ -2,13 +2,13 @@
 
 namespace App\Observers;
 
-use App\Repositories\IStorable;
+use App\Repositories\Countries\CountriesRepositoryInterface;
 
 class CountryObserver
 {
-    protected IStorable $countries;
+    protected CountriesRepositoryInterface $countries;
 
-    public function __construct(IStorable $countries)
+    public function __construct(CountriesRepositoryInterface $countries)
     {
         $this->countries = $countries;
     }

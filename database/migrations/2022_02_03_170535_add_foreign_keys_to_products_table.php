@@ -17,17 +17,17 @@ class AddForeignKeysToProductsTable extends Migration
             $table->foreign('currency_id')
                 ->references('id')
                 ->on('currencies')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
             $table->foreign('category_id')
                 ->references('id')
                 ->on('categories')
-                ->cascadeOnDelete()
+                ->nullOnDelete()
                 ->cascadeOnUpdate();
             $table->foreign('product_description_id')
                 ->references('id')
                 ->on('product_descriptions')
-                ->cascadeOnDelete()
+                ->nullOnDelete()
                 ->cascadeOnUpdate();
         });
     }

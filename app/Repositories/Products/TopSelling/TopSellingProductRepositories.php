@@ -37,7 +37,7 @@ class TopSellingProductRepositories implements TopSellingProductInterface
         $ids = Cache::rememberForever('top_selling_product', function () {
             return $this->ids();
         });
-        return Product::query()->find($ids);
+        return Product::query()->inStock()->find($ids);
     }
 
     public function ids(): array

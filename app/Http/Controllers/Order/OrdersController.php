@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers\Order;
 
-use App\Http\Services\Cart;
-use App\Models\Order\BillingAddress;
 use App\Models\Order\Order;
-use App\Models\Product\Product;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Models\Order\BillingAddress;
+use App\Http\Services\Facades\Cart\Cart;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
-use Illuminate\Support\Facades\DB;
 
 class OrdersController extends Controller
 {
@@ -26,7 +24,7 @@ class OrdersController extends Controller
      */
     public function index(): JsonResponse
     {
-        return $this->response(Order::query()->with(['products'])->simplePaginate(10));
+        return $this->response(Order::query()->with(['products', 'invoice'])->simplePaginate(10));
     }
 
     /**
@@ -37,21 +35,16 @@ class OrdersController extends Controller
      */
     public function store(StoreOrderRequest $request): JsonResponse
     {
-        $billing_id = null;
-        $count = 0;
-        $ids = ($request->order['products']);
-        foreach ($ids as $id) {
-            $count += Product::query()->find($id)
-                ->first()->sale_price;
-        }
-        DB::transaction(function () use ($request, $count, $ids) {
-            $billing_id = BillingAddress::query()->insertGetId($request->only(['billing'])['billing']);
-            Order::query()->create(
-                $request->only(['currency_id', 'user_id', 'coupon_id']) +
-                [ 'amount' => $count, 'billing_address_id' => $billing_id]
-            )->products()->attach($ids);
-        });
-        return $this->response($billing_id, 'success');
+        $count = Cart::amount($request?->order ?? []);
+        $items = Cart::productOrderAttach($request?->order ?? []);
+        $billing_id = BillingAddress::query()->updateOrCreate($request->only('billing')['billing'],
+            $request->only(['billing'])['billing']);
+        $order = Order::query()?->create(
+            $request->only(['currency_id', 'user_id', 'coupon_id', 'note']) +
+            [ 'amount' => $count, 'billing_address_id' => $billing_id?->id ?? 0]
+        );
+        $order->products()?->attach($items);
+        return $this->response($order, 'success');
     }
 
     /**
@@ -62,12 +55,7 @@ class OrdersController extends Controller
      */
     public function show(Order $order): JsonResponse
     {
-        return $this->response(
-            $order->load(['products' => function ($query) {
-                return $query->groupBy('products.id')
-                    ->selectRaw('products.*, count(products.id) as count, sum(products.sale_price) as sum_sale_price')
-                    ->get();
-        }]));
+        return $this->response($order->load(['products']));
     }
 
     /**
@@ -75,7 +63,7 @@ class OrdersController extends Controller
      */
     public function userOrder(): JsonResponse
     {
-        return $this->response(auth()?->user()?->load('orders'));
+        return $this->response(auth()?->user()?->load('orders.invoice'));
     }
 
     /**
@@ -87,7 +75,7 @@ class OrdersController extends Controller
      */
     public function update(UpdateOrderRequest $request, Order $order): JsonResponse
     {
-        return $this->response($order::query()->update($request->validated()));
+        return $this->response($order->update($request->validated()));
     }
 
     /**
@@ -111,7 +99,7 @@ class OrdersController extends Controller
     public function details(Order $order): JsonResponse
     {
         return $this->response(
-            $order->load(['products', 'shippingAddress', 'billingAddress', 'coupon', 'workflow'])
+            $order->load(['products' , 'shippingAddress', 'billingAddress', 'coupon', 'workflow'])
         );
     }
 
@@ -137,11 +125,17 @@ class OrdersController extends Controller
     public function orderDetails(Order $order): JsonResponse
     {
         return $this->response(
-            $order->load(['coupon', 'shippingAddress', 'billingAddress', 'user', 'products' => function ($query) {
-            return $query->groupBy('products.id')
-                ->selectRaw('products.*, count(products.id) as count, sum(products.sale_price) as sum_sale_price')
-                ->get();
-        }])
+            $order->load(['coupon', 'shippingAddress', 'billingAddress', 'user', 'products'])
         );
+    }
+
+    /**
+     * List of all order stats.
+     *
+     * @return JsonResponse
+     */
+    public function status(): JsonResponse
+    {
+        return $this->response(config('order.status'));
     }
 }

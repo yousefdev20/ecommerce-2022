@@ -6,6 +6,8 @@ use App\Http\Services\Cart;
 use App\Repositories\Colors\Colors;
 use App\Repositories\Products\TopSelling\TopSellingProductInterface;
 use App\Repositories\Products\TopSelling\TopSellingProductRepositories;
+use App\Repositories\Sizes\Sizes;
+use App\Repositories\Sizes\SizesInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Currencies\Currency;
 use App\Repositories\Colors\ColorsInterface;
@@ -44,6 +46,10 @@ class AppServiceProvider extends ServiceProvider
 
         app()->bind(ColorsInterface::class, function () {
             return new Colors();
+        });
+
+        app()->bind(SizesInterface::class, function () {
+            return new Sizes();
         });
 
         app()->bind(CountriesRepositoryInterface::class, function () {

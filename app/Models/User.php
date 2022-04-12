@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Casts\EmailCast;
+use App\Models\Order\BillingAddress;
 use App\Models\Order\Order;
+use App\Models\Order\ShippingAddress;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Product\ProductFavorite;
@@ -62,5 +64,15 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function shipping_addresses()
+    {
+        return $this->hasMany(ShippingAddress::class);
+    }
+
+    public function billing_addresses()
+    {
+        return $this->hasMany(BillingAddress::class);
     }
 }
