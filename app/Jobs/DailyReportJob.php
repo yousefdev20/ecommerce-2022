@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DailyReportJob implements ShouldQueue
 {
@@ -21,8 +22,9 @@ class DailyReportJob implements ShouldQueue
      */
     public function __construct()
     {
+        Log::info('Info', ['data' => 'some thing changed']);
         $orders = DB::table('orders')->count();
-        $delivered_orders = DB::table('orders')->where('status', 4)->count();
+        $delivered_orders = DB::table('orders')->where('status', 5)->count();
         $products = DB::table('products')->count();
         $customers = DB::table('users')->count();
         Report::query()->create([

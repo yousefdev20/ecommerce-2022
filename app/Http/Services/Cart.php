@@ -43,7 +43,7 @@ class Cart
         foreach ($cart ?? [] as $item) {
             for ($i = 0; $i < $item['qun'] ?? 0; $i++) {
                 $obj['product_id'] = $item['id'];
-                $obj['size_id'] = $item['size']['id'] ?? null;
+                $obj['size_id'] = $item['size']['size_id'] ?? null;
                 $obj['color_id'] = $item['color']['id'] ?? null;
                 $items->add($obj);
             }
