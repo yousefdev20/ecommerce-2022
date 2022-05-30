@@ -20,6 +20,11 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ProductsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:delete_product')->only('destroy');
+        $this->middleware('permission:edit_order|show_product')->only(['update']);
+    }
 
     /**
      * Display a listing of the resource.
@@ -300,7 +305,9 @@ class ProductsController extends Controller
 
     public function search(string $search, int|null $page = null): JsonResponse
     {
-        $query = Product::query()->inStock()->where('name_en', 'LIKE', '%' . $search . '%');
+        $query = Product::query()->inStock()
+            ->where('name_en', 'LIKE', '%' . $search . '%')
+            ->orWhere('name_ar', 'LIKE', '%' . $search . '%');
         $products = $page ? $query->simplePaginate($page) : $query->get();
         return $this->response($products);
     }

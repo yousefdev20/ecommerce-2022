@@ -12,7 +12,8 @@ class MediaController extends Controller
 {
     public function __construct()
     {
-//        $this->middleware(["permission:show_media"]);
+        $this->middleware('permission:add_media')->only(['store']);
+        $this->middleware('permission:delete_media')->only(['destroy']);
     }
 
     /**

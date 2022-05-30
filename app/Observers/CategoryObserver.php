@@ -2,13 +2,15 @@
 
 namespace App\Observers;
 
+use App\Jobs\LogJob;
 use App\Models\Product\Category;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use App\Repositories\Category\CategoriesRepositoryInterface;
 
 class CategoryObserver
 {
-    public $categoriesRepository;
+    public CategoriesRepositoryInterface $categoriesRepository;
 
     public function __construct(CategoriesRepositoryInterface $categoriesRepository)
     {
@@ -21,7 +23,7 @@ class CategoryObserver
      * @param Category $category
      * @return void
      */
-    public function created(Category $category)
+    public function created(Category $category): void
     {
         if ($category->parent_id ?? false) {
             $parent = DB::table('categories')->select(['level'])
@@ -29,6 +31,7 @@ class CategoryObserver
             $category->update(['level' => ++$parent->level]);
         }
         $this->categoriesRepository->refresh();
+        Queue::pushOn('logs', new LogJob(auth()->id(), 'create_category', $category));
     }
 
     /**
@@ -37,9 +40,10 @@ class CategoryObserver
      * @param Category $category
      * @return void
      */
-    public function updated(Category $category)
+    public function updated(Category $category): void
     {
         $this->categoriesRepository->refresh();
+        Queue::pushOn('logs', new LogJob(auth()->id(), 'update_category', $category->getDirty()));
     }
 
     /**
@@ -48,9 +52,10 @@ class CategoryObserver
      * @param Category $category
      * @return void
      */
-    public function deleted(Category $category)
+    public function deleted(Category $category): void
     {
         $this->categoriesRepository->refresh();
+        Queue::pushOn('logs', new LogJob(auth()->id(), 'delete_category', $category->id));
     }
 
     /**
@@ -59,7 +64,7 @@ class CategoryObserver
      * @param Category $category
      * @return void
      */
-    public function restored(Category $category)
+    public function restored(Category $category): void
     {
         $this->categoriesRepository->refresh();
     }
@@ -70,8 +75,9 @@ class CategoryObserver
      * @param Category $category
      * @return void
      */
-    public function forceDeleted(Category $category)
+    public function forceDeleted(Category $category): void
     {
         $this->categoriesRepository->refresh();
+        Queue::pushOn('logs', new LogJob(auth()->id(), 'delete_category', $category));
     }
 }

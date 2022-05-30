@@ -3,6 +3,7 @@
 namespace App\Models\Deal;
 
 use App\Models\Product\Product;
+use App\Models\Product\Size;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;

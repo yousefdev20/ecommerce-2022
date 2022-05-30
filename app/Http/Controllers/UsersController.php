@@ -8,6 +8,12 @@ use Illuminate\Http\JsonResponse;
 
 class UsersController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:show_users')->only('index');
+        $this->middleware('permission:delete_user')->only(['destroy', 'unblock']);
+    }
+
     /**
      * @return JsonResponse
      */

@@ -1,0 +1,31 @@
+---
+- name: upload changes on production server
+#  become: true
+  user: yousef
+  hosts: [iron]
+  vars:
+      date_now: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+      path_directory: /var/www/html/iron/{{ date_now }}
+  tasks:
+  - name: create directory.
+    file:
+      path: "{{ path_directory }}"
+      state: directory
+      mode: 0777
+#  - name: delete this directory.
+#    file:
+#      path: /var/www/html/iron/20220507
+#      state: absent
+#  - name: recreate directory.
+#    file:
+#      path: /var/www/html/iron/20220507
+#      state: directory
+#      mode: 0777
+#  - name: create directory (parent).
+#    file:
+#      path: /var/www/html/iron/parent
+#      state: directory
+#      mode: 0777
+#  - name: copy directory.
+#    shell: mv /var/www/html/iron/20220507 /var/www/html/iron/parent
+...

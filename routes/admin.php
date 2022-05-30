@@ -1,13 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\MediaController;
+use \App\Http\Controllers\RoleController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\Deal\DealController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\Order\OrdersController;
 use App\Http\Controllers\Product\ColorsController;
 use App\Http\Controllers\Auth\Admin\LoginController;
@@ -25,9 +28,11 @@ use App\Http\Controllers\Product\ExclusiveProductController;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
+| !! The Route is cached on Storage !!
+| !! Any changes on this file please delete cache and restore it again !!
+|
 */
 Route::get('products/units', [ProductsController::class, 'units']);
-
 
 Route::post('login', [LoginController::class, 'login']);
 
@@ -43,7 +48,7 @@ Route::group(['middleware' => ['auth:admin']], function () {
         Route::get('units', [ProductsController::class, 'units']);
         Route::get('scale/sizes', [ProductsController::class, 'sizes']);
     });
-    Route::/*middleware(['role:store_manager'])->*/resource('media', MediaController::class);
+    Route::resource('media', MediaController::class);
 
     Route::resource('colors', ColorsController::class)
         ->names(['index' => 'colors.admin.index', 'show' => 'colors.admin.show', 'update' => 'colors.admin.update',
@@ -64,7 +69,8 @@ Route::group(['middleware' => ['auth:admin']], function () {
             'store' => 'deals.admin.store', 'destroy' => 'deals.admin.destroy']);
 
     Route::resource('categories', CategoriesController::class)
-        ->names(['index' => 'categories.admin.index', 'show' => 'categories.admin.show', 'update' => 'categories.admin.update',
+        ->names([
+            'index' => 'categories.admin.index', 'show' => 'categories.admin.show', 'update' => 'categories.admin.update',
             'store' => 'categories.admin.store', 'destroy' => 'categories.admin.destroy']);
 
     Route::resource('admins', AdminController::class)
@@ -92,6 +98,11 @@ Route::group(['middleware' => ['auth:admin']], function () {
         ->names(['index' => 'exclusives.admin.index', 'show' => 'exclusives.admin.show', 'update' => 'exclusives.admin.update',
             'store' => 'exclusives.admin.store', 'destroy' => 'exclusives.admin.destroy']);
 
+    Route::resource('roles', RoleController::class);
+
+    Route::resource('permissions', PermissionsController::class);
+
     Route::get('daily/report', [ReportController::class, 'index']);
     Route::get('danger/quantity/product', [ProductsController::class, 'dangerQuantityProduct']);
+    Route::get('logs', [LogController::class, 'index']);
 });

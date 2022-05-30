@@ -8,22 +8,24 @@ class Currency
 {
     protected CurrencyInterface $currency;
     protected string|null $currentCurrencyCode;
+    protected string|null|int $currentCurrencyId;
     protected \App\Models\Currency\Currency|null $currentCurrency;
 
     public function __construct(CurrencyInterface $currency)
     {
         $this->currency = $currency;
         $this->currentCurrencyCode = request()->header('currency_code') ?? null;
-        $this->currentCurrency = $currency->find($this->currentCurrencyCode);
+        $this->currentCurrencyId = request()->header('currency_id') ?? null;
+        $this->currentCurrency = $currency->where('id', $this->currentCurrencyId);
     }
 
-    public function find(string|null $code)
+    public function find(string|null $code): ?\App\Models\Currency\Currency
     {
         $this->currentCurrency = $this->currency->find($code);
         return $this->currentCurrency;
     }
 
-    public function get()
+    public function get(): ?\App\Models\Currency\Currency
     {
         return $this->currentCurrency;
     }
@@ -57,5 +59,10 @@ class Currency
     public function defaultCurrency()
     {
         return $this->currency->find(config('currency.default'));
+    }
+
+    public function setCurrency(null|int $id): void
+    {
+        $this->currentCurrency = $this->currency->where('id', $id ?? $this->defaultCurrency());
     }
 }

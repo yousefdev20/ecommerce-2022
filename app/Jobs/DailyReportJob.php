@@ -22,15 +22,7 @@ class DailyReportJob implements ShouldQueue
      */
     public function __construct()
     {
-        Log::info('Info', ['data' => 'some thing changed']);
-        $orders = DB::table('orders')->count();
-        $delivered_orders = DB::table('orders')->where('status', 5)->count();
-        $products = DB::table('products')->count();
-        $customers = DB::table('users')->count();
-        Report::query()->create([
-            'orders' => $orders, 'delivered_order' => $delivered_orders,
-            'customers' => $customers, 'products'  => $products
-        ]);
+        $this->action();
     }
 
     /**
@@ -40,11 +32,19 @@ class DailyReportJob implements ShouldQueue
      */
     public function handle()
     {
+        $this->action();
+    }
+
+    private function action()
+    {
         $orders = DB::table('orders')->count();
-        $delivered_orders = DB::table('orders')->where('status', 4)->count();
+        $delivered_orders = DB::table('orders')->where('status', 5)->count();
         $products = DB::table('products')->count();
         $customers = DB::table('users')->count();
-        Report::query()->create([
+        Report::query()->updateOrCreate([
+            'orders' => $orders, 'delivered_order' => $delivered_orders,
+            'customers' => $customers, 'products'  => $products
+        ], [
             'orders' => $orders, 'delivered_order' => $delivered_orders,
             'customers' => $customers, 'products'  => $products
         ]);

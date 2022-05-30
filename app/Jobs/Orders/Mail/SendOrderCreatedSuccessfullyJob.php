@@ -2,15 +2,18 @@
 
 namespace App\Jobs\Orders\Mail;
 
-use App\Mail\Orders\OrderCreatedSuccessfully;
 use App\Models\Order\Order;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
+use App\Mail\Orders\OrderCreatedSuccessfully;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use App\Http\Services\Facades\Currencies\Currency;
+use App\Repositories\Currencies\CurrencyInterface;
+
 
 class SendOrderCreatedSuccessfullyJob implements ShouldQueue
 {
@@ -30,16 +33,14 @@ class SendOrderCreatedSuccessfullyJob implements ShouldQueue
     /**
      * Execute the job.
      *
+     * @param CurrencyInterface $currency
      * @return void
      */
-    public function handle()
+    public function handle(CurrencyInterface $currency): void
     {
-        if ($this?->order?->user()?->email ?? false) {
-            Mail::to($this?->order?->user()?->email)
-                ->send(new OrderCreatedSuccessfully());
-        } else {
-            Mail::to($this?->order?->billingAddress()?->email)
-                ->send(new OrderCreatedSuccessfully());
-        }
+        Currency::setCurrency($this?->order?->currency_id);
+        $order = Order::with(['products', 'billingAddress', 'user'])->find($this->order->id);
+        $to = $order?->user?->email ?? $order?->billing_address?->email ?? '';
+        Mail::to($to)->send(new OrderCreatedSuccessfully($order));
     }
 }

@@ -12,6 +12,12 @@ use Illuminate\Support\Facades\DB;
 
 class DealController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:delete_deal')->only('destroy');
+        $this->middleware('permission:edit_deal')->only(['update']);
+    }
+
     /**
      * Display a listing of the current active Deal.
      *

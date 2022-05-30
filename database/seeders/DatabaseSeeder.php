@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             ColorSeed::class, SizesSeed::class, CurrencySeed::class, CategorySeed::class, AdminSeed::class, DealSeeder::class,
-            CountriesSeed::class
+            CountriesSeed::class, LanguageSeeder::class
         ]);
     }
 }

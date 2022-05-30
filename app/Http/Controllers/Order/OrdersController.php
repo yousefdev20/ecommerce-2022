@@ -15,6 +15,8 @@ class OrdersController extends Controller
     public function __construct()
     {
         $this->middleware('auth:sanctum')->only('show');
+        $this->middleware('permission:delete_order')->only('destroy');
+        $this->middleware('permission:edit_order|show_order')->only(['update']);
     }
 
     /**
@@ -108,7 +110,7 @@ class OrdersController extends Controller
      * @param string $email
      * @return JsonResponse
      */
-    public function orderTracking(int $order, string $email): JsonResponse
+    public function orderTracking(string|int $order, string $email): JsonResponse
     {
         return $this->response(Order::query()
             ->whereHas('billingAddress', function ($query) use ($email) {

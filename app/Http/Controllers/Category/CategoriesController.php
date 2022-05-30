@@ -11,9 +11,17 @@ use App\Repositories\Category\CategoriesRepositoryInterface;
 
 class CategoriesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:delete_category')->only('destroy');
+        $this->middleware('permission:edit_category')->only('update');
+        $this->middleware('permission:show_category')->only('show');
+    }
+
     /**
      * Display a listing of the resource.
      *
+     * @param CategoriesRepositoryInterface $categoriesRepository
      * @return JsonResponse
      */
     public function index(CategoriesRepositoryInterface $categoriesRepository): JsonResponse

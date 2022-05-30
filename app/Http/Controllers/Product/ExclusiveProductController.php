@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Auth;
 
 class ExclusiveProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:delete_exclusive_product')->only('destroy');
+        $this->middleware('permission:edit_exclusive_product|show_exclusive_product')->only(['update']);
+    }
+
     /**
      * Display a listing of the resource.
      *

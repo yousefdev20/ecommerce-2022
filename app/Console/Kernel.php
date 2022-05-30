@@ -19,10 +19,10 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @param Schedule $schedule
      * @return void
      */
-    protected function schedule(Schedule $schedule)
+    protected function schedule(Schedule $schedule): void
     {
         /**
          * start composition section.
@@ -38,7 +38,7 @@ class Kernel extends ConsoleKernel
         $schedule->job(new DeleteInactiveExclusiveJob())->dailyAt('23:59');
         $schedule->job(new DeleteInactiveDealJob())->dailyAt('23:59');
         $schedule->job(new DangerQuantityProductJob())->everyTenMinutes();
-        $schedule->job(new DailyReportJob())->everyMinute();
+        $schedule->job(new DailyReportJob())->everyTenMinutes();
     }
 
     /**
@@ -46,7 +46,7 @@ class Kernel extends ConsoleKernel
      *
      * @return void
      */
-    protected function commands()
+    protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');
 

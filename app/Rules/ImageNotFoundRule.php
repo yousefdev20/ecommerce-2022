@@ -27,7 +27,6 @@ class ImageNotFoundRule implements Rule
      */
     public function passes($attribute, $value)
     {
-//        Storage::disk('local')->exists('public/products/2022-03-15/A4St0akGoHUfLbEcHT2H0xvgtCbqY4WeNjEsWs84.jpg'),
         return Storage::exists(str_replace(url('/') . '/', '', str_replace('storage', 'public', $value)));
     }
 
