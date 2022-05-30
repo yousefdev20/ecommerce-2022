@@ -30,6 +30,7 @@ class OrderStatusRule implements Rule
                 return true;
             }
         }
+
         return false;
     }
 
