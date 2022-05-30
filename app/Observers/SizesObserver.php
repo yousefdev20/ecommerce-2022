@@ -20,7 +20,7 @@ class SizesObserver
      * @param Size $size
      * @return void
      */
-    public function created(Size $size)
+    public function created(Size $size): void
     {
         $this->sizes->refresh();
     }
@@ -31,7 +31,7 @@ class SizesObserver
      * @param Size $size
      * @return void
      */
-    public function updated(Size $size)
+    public function updated(Size $size): void
     {
         $this->sizes->refresh();
     }
@@ -42,7 +42,7 @@ class SizesObserver
      * @param Size $size
      * @return void
      */
-    public function deleted(Size $size)
+    public function deleted(Size $size): void
     {
         $this->sizes->refresh();
     }
@@ -53,7 +53,7 @@ class SizesObserver
      * @param Size $size
      * @return void
      */
-    public function restored(Size $size)
+    public function restored(Size $size): void
     {
         $this->sizes->refresh();
     }
@@ -64,7 +64,7 @@ class SizesObserver
      * @param Size $size
      * @return void
      */
-    public function forceDeleted(Size $size)
+    public function forceDeleted(Size $size): void
     {
         $this->sizes->refresh();
     }

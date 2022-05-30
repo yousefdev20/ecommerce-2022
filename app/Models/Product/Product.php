@@ -2,6 +2,7 @@
 
 namespace App\Models\Product;
 
+use App\Http\Services\Facades\Language\Language;
 use App\Jobs\Products\ProductRateJob;
 use App\Models\Slider;
 use App\Models\ProductReview;
@@ -16,7 +17,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $with = ['currency'];
+    protected $with = ['currency', 'colors', 'sizes'];
     protected $withCount = ['reviews'];
     protected int $originCurrencyId = 0;
     protected $appends = ['status', 'rate', 'unit_id', 'clone_price'];
@@ -73,6 +74,14 @@ class Product extends Model
         return 0;
     }
 
+    public function getNameEnAttribute($value)
+    {
+        if (Language::code() === 'en') {
+            return $value;
+        }
+        return $this->name_ar ?? '';
+    }
+
     public function getSaleUnitAttribute($value): \Illuminate\Support\Collection|null|array
     {
         $unit = collect(config('product.units'))->where('id', $value)->first();
@@ -90,9 +99,9 @@ class Product extends Model
         return $this?->sale_unit['id'] ?? 1;
     }
 
-    public function getClonePriceAttribute(): int
+    public function getClonePriceAttribute(): float
     {
-        return $this?->sale_price;
+        return $this?->sale_price ?? 0.0;
     }
 
     /** (End) Custom Attributes section **/

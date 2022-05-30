@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
-use App\Models\Currency\Currency;
+use App\Jobs\LogJob;
+use Illuminate\Support\Facades\Queue;
+use App\Models\Product\ExclusiveProduct;
 use App\Repositories\Exclusives\ExclusivesRepositoryInterface;
 
 class ExclusiveProductObserver
@@ -22,19 +24,34 @@ class ExclusiveProductObserver
      *
      * @return void
      */
-    public function created()
+    public function created(ExclusiveProduct $product): void
     {
         $this->exclusivesRepository->refresh();
+        Queue::pushOn('logs', new LogJob(auth()->id(), 'create_exclusive_product', $product));
     }
 
     /**
      * Handle the Currency "updated" event.
      *
+     * @param ExclusiveProduct $product
      * @return void
      */
-    public function updated()
+    public function updated(ExclusiveProduct $product): void
     {
         $this->exclusivesRepository->refresh();
+        Queue::pushOn('logs', new LogJob(auth()->id(), 'update_exclusive_product', $product->getDirty()));
+    }
+
+    /**
+     * Handle the Currency "deleted" event.
+     *
+     * @param ExclusiveProduct $product
+     * @return void
+     */
+    public function deleted(ExclusiveProduct $product): void
+    {
+        $this->exclusivesRepository->refresh();
+        Queue::pushOn('logs', new LogJob(auth()->id(), 'delete_exclusive_product', $product));
     }
 
     /**
@@ -42,18 +59,9 @@ class ExclusiveProductObserver
      *
      * @return void
      */
-    public function deleted()
+    public function forceDeleted(ExclusiveProduct $product): void
     {
         $this->exclusivesRepository->refresh();
-    }
-
-    /**
-     * Handle the Currency "deleted" event.
-     *
-     * @return void
-     */
-    public function forceDeleted()
-    {
-        $this->exclusivesRepository->refresh();
+        Queue::pushOn('logs', new LogJob(auth()->id(), 'delete_exclusive_product', $product));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models\Product;
 
+use App\Http\Services\Facades\Language\Language;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,5 +15,13 @@ class ProductDescription extends Model
     public function product() {
 
         return $this->hasOne(Product::class);
+    }
+
+    public function getDescriptionEnAttribute($value)
+    {
+        if (Language::code() === 'en') {
+            return $value;
+        }
+        return $this->description_ar ?? '';
     }
 }

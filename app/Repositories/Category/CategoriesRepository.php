@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Category;
 
+use App\Http\Services\Facades\Language\Language;
 use App\Models\Product\Category;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
@@ -10,9 +11,7 @@ class CategoriesRepository implements CategoriesRepositoryInterface
 {
     public function get()
     {
-        return Cache::rememberForever('categories', function () {
-            return Category::doseNotHaveParent()->get();
-        });
+        return $this->handel();
     }
 
     public function store()
@@ -69,8 +68,27 @@ class CategoriesRepository implements CategoriesRepositoryInterface
         // TODO: Implement find() method.
     }
 
-    public function where(string $column = 'id', $value)
+    public function where(string $column, $value)
     {
         return collect($this->get())->where($column, $value)->first();
+    }
+
+    public function handel()
+    {
+        $categories = Cache::rememberForever('categories', function () {
+            return Category::doseNotHaveParent()->get();
+        });
+
+//        dd(['data' => $categories]);
+        if (Language::code() !== 'en') {
+            $_clone = [];
+            foreach ($categories ?? [] as $key => $item) {
+                $_clone[$key] = $item;
+                $_clone[$key]['name_en'] = $item->name_ar;
+                $_clone[$key]['code_en'] = $item->code_ar;
+            }
+            return $_clone;
+        }
+        return $categories;
     }
 }

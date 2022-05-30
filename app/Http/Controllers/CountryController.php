@@ -13,11 +13,14 @@ class CountryController extends Controller
     /**
      * @var CountriesRepositoryInterface
      */
-    protected $counties;
+    protected CountriesRepositoryInterface $counties;
 
     public function __construct(CountriesRepositoryInterface $counties)
     {
         $this->counties = $counties;
+        $this->middleware('permission:add_country')->only(['store']);
+        $this->middleware('permission:delete_country')->only(['destroy']);
+        $this->middleware('permission:show_country|edit_country')->only(['show']);
     }
 
     /**

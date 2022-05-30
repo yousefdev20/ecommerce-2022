@@ -12,6 +12,12 @@ use App\Http\Requests\UpdateCurrencyRequest;
 
 class CurrenciesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:delete_currency')->only('destroy');
+        $this->middleware('permission:edit_currency')->only(['update']);
+    }
+
     /**
      * Display a listing of the resource.
      *

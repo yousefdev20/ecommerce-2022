@@ -11,12 +11,13 @@ use App\Repositories\Sizes\SizesInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
 
 class Order extends Model
 {
     use HasFactory;
 
-    protected $with = ['currency'];
+    protected $with = ['currency', 'user'];
     protected $appends = ['status_string'];
     protected $fillable = [
         'user_id', 'workflow_id', 'coupon_id', 'currency_id',

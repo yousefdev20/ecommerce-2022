@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return config('app.name');
 });
 
 Route::get('categories', function () {
@@ -31,4 +31,19 @@ Route::get('categories', function () {
     return view('welcome', ['data' => $data])->with('data', $data);
 //    return view('welcome', ['data' => \App\Models\Product\Product::with(['currency', 'category'])->get()]);
 //    return view('welcome', ['data' => \App\Models\Product\Category::all()]);
+});
+
+Route::get('/generate/routes', function() {
+
+header('Content-Type: application/excel');
+    header('Content-Disposition: attachment; filename="routes.csv"');
+ 
+    $routes = Route::getRoutes();
+    $fp = fopen('php://output', 'w');
+    fputcsv($fp, ['METHOD', 'URI', 'NAME', 'ACTION']);
+    foreach ($routes as $route) {
+        fputcsv($fp, [head($route->methods()) , $route->uri(), $route->getName(), $route->getActionName()]);
+    }
+    fclose($fp);
+
 });

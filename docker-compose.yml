@@ -14,6 +14,14 @@ services:
             XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
         container_name: 'ironApp'
+        deploy:
+          resources:
+            limits:
+              cpus: '0.001'
+              memory: 50M
+            reservations:
+              cpus: '0.0001'
+              memory: 20M
         volumes:
             - '.:/var/www/html/Iron'
         networks:
@@ -26,6 +34,7 @@ services:
         ports:
             - '${FORWARD_DB_PORT:-33066}:3306'
         container_name: 'ironDatabase'
+        restart: always
         environment:
             MYSQL_ROOT_PASSWORD: 'yousef'
             MYSQL_DATABASE: 'iron'
@@ -51,11 +60,14 @@ services:
             - iron
     nginx:
         image: nginx:alpine
+        container_name: ironNginx
         ports:
-            - "85:80"
+            - "85:85"
+            - "4431:4431"
         volumes:
-            - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
-            - '.:/var/www/html/Iron'
+            - ./docker-config/nginx/conf.d:/etc/nginx/conf.d:ro
+            - ./docker-config/nginx/logs/iron.access.log:/var/logs/nginx/iron.access.log
+            - ./docker-config/nginx/logs/iron.access.log:/var/logs/nginx/iron.error.log
         depends_on:
             - iron
         networks:

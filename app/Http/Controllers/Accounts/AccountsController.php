@@ -20,11 +20,12 @@ class AccountsController extends Controller
     }
 
     /**
+     * @param User $user
      * @param UserChangePasswordRequest $request
      * @return JsonResponse
      */
     public function changeUserPassword(User $user, UserChangePasswordRequest $request): JsonResponse
     {
-        return $this->response($user->update(['password' => $request->password]));
+        return $this->response($user->update(['password' => $request->password ?? '']));
     }
 }

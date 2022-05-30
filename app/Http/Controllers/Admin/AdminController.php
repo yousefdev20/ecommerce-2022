@@ -11,6 +11,14 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:add_admin')->only('store');
+        $this->middleware('permission:show_admins')->only('index');
+        $this->middleware('permission:delete_admin')->only('destroy');
+        $this->middleware('permission:edit_admin|show_admins')->only(['show', 'update']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -18,20 +26,18 @@ class AdminController extends Controller
      */
     public function index(): JsonResponse
     {
-        return $this->response(Admin::all());
+        return $this->response(Admin::with(['roles'])->get());
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreAdminRequest  $request
+     * @param StoreAdminRequest $request
      * @return JsonResponse
      */
     public function store(StoreAdminRequest $request): JsonResponse
     {
-        return $this->response(Admin::query()->create(
-            $request->validated()  + ['password' => Hash::make($request->password)])
-        );
+        return $this->response(Admin::query()->create($request->validated())?->roles()?->sync($request->roles ?? []));
     }
 
     /**
@@ -42,7 +48,7 @@ class AdminController extends Controller
      */
     public function show(Admin $admin): JsonResponse
     {
-        return $this->response($admin);
+        return $this->response($admin->load(['roles']));
     }
 
     /**
@@ -54,7 +60,9 @@ class AdminController extends Controller
      */
     public function update(UpdateAdminRequest $request, Admin $admin): JsonResponse
     {
-        return $this->response($admin::query()->update($request->validated()));
+        $admin->roles()->sync($request->roles ?? [], true);
+        $admin->update($request->except(['roles']));
+        return $this->response($admin);
     }
 
     /**
