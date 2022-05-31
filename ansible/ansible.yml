@@ -2,7 +2,7 @@
 - name: upload changes on production server
 #  become: true
   user: yousef
-  hosts: [iron]
+  hosts: [iron_bridge_development]
   vars:
       date_now: "{{ lookup('pipe', 'date +%Y%m%d') }}"
       path_directory: /var/www/html/iron/{{ date_now }}
@@ -12,6 +12,12 @@
       path: "{{ path_directory }}"
       state: directory
       mode: 0777
+  - name: scure copy model
+    synchronize:
+      src: /home/yousef/Desktop/iron-bridge/backend-2/backend-1
+      dest: "{{ path_directory }}"
+
+
 #  - name: delete this directory.
 #    file:
 #      path: /var/www/html/iron/20220507
