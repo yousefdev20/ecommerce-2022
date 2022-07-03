@@ -7,15 +7,22 @@
       date_now: "{{ lookup('pipe', 'date +%Y%m%d') }}"
       path_directory: /var/www/html/iron/{{ date_now }}
   tasks:
-  - name: create directory.
-    file:
-      path: "{{ path_directory }}"
-      state: directory
-      mode: 0777
-  - name: scure copy model
-    synchronize:
-      src: /home/yousef/Desktop/iron-bridge/backend-2/backend-1
-      dest: "{{ path_directory }}"
+#  - name: create directory.
+#    file:
+#      path: "{{ path_directory }}"
+#      state: directory
+#      mode: 0777
+   - name: restart docker image
+     command: cd /var/www/html
+     command: echo $(pwd)
+# unsing scp from devopment machine magnetar digital unit (Yousef) to iron bridge server.
+#  - name: scure copy model
+#    synchronize:
+#      src: /home/yousef/Desktop/iron-bridge/backend-2/backend-1
+#      dest: "{{ path_directory }}"
+
+#  - name: init git repo
+#    command: cd {{ path_directory }} . "&&" . git init
 
 
 #  - name: delete this directory.
