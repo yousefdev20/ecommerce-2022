@@ -63,7 +63,7 @@ services:
         container_name: ironNginx
         ports:
             - "85:85"
-            - "4431:443"
+            - "443:443"
         volumes:
             - ./docker-config/nginx/conf.d:/etc/nginx/conf.d:ro
             - ./docker-config/nginx/logs/iron.access.log:/var/logs/nginx/iron.access.log
