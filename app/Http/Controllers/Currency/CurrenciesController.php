@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Currency;
 
 use App\Models\Currency\Currency;
+use App\Models\Product\Category;
 use App\Repositories\Currencies\CurrencyInterface;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -11,9 +12,16 @@ use App\Http\Requests\UpdateCurrencyRequest;
 
 class CurrenciesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:delete_currency')->only('destroy');
+        $this->middleware('permission:edit_currency')->only(['update']);
+    }
+
     /**
      * Display a listing of the resource.
      *
+     * @param CurrencyInterface $currency
      * @return JsonResponse
      */
     public function index(CurrencyInterface $currency): JsonResponse
@@ -58,11 +66,14 @@ class CurrenciesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Currency $currency
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(Currency $currency): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        return $this->response($currency->delete());
+        if (!Currency::query()->hasProducts()->find($id)) {
+            return $this->response(Currency::query()->hasProducts()->find($id)->delete());
+        }
+        return $this->response(['data' => 'this currency may has products, you cant delete it.'], null, 422);
     }
 }

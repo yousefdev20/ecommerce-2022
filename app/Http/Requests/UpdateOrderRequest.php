@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\OrderStatusRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class UpdateOrderRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class UpdateOrderRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +26,8 @@ class UpdateOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'status' => ['required', new OrderStatusRule()],
+            'admin_note' => 'nullable'
         ];
     }
 }

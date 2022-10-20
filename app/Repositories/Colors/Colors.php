@@ -39,8 +39,8 @@ class Colors implements ColorsInterface
         $this->store();
     }
 
-    public function where(string $column = 'id', $value)
+    public function where(string $column, $value)
     {
-        // TODO: Implement where() method.
+        return collect($this->get())->where($column, '=', $value)->first() ?? [];
     }
 }

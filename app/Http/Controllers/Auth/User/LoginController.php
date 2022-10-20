@@ -45,6 +45,6 @@ class LoginController extends Controller
     {
         $username = $this->username();
 
-        return [$username => $request?->username, 'password' => $request?->password];
+        return [$username => $request?->username ?? '', 'password' => $request?->password ?? ''];
     }
 }

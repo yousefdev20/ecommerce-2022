@@ -21,9 +21,12 @@ class CreateProductsTable extends Migration
             $table->float('sale_price');
             $table->integer('quantity')->nullable();
             $table->string('image');
+            $table->integer('pieces')->nullable();
+            $table->float('kg')->nullable();
+            $table->enum('sale_unit', [1, 2, 3])->default(1);
             $table->unsignedBigInteger('currency_id')->index();
-            $table->unsignedBigInteger('category_id')->index();
-            $table->unsignedBigInteger('product_description_id')->index();
+            $table->unsignedBigInteger('category_id')->nullable();
+            $table->unsignedBigInteger('product_description_id')->nullable();
             $table->timestamps();
         });
     }

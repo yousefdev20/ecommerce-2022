@@ -42,16 +42,6 @@ class ProductFavoriteController extends Controller
         return $this->response($productFavorite->load(['product']));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param UpdateProductFavoriteRequest $request
-     * @param ProductFavorite $productFavorite
-     */
-    public function update(UpdateProductFavoriteRequest $request, ProductFavorite $productFavorite)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.

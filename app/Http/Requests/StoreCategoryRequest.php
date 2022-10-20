@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\MaxLevelOfCategoryRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,7 +29,8 @@ class StoreCategoryRequest extends FormRequest
             'name_ar' => 'required|unique:categories',
             'name_en' => 'required|unique:categories',
             'image' => 'required|mimes:png|max:2048|dimensions:min_width=100,min_height=200',
-            'parent_id' => Rule::when(request('parent_id') ?? false, ['exists:categories,id'])
+            'parent_id' => Rule::when(request('parent_id') ?? false, ['exists:categories,id',
+                new MaxLevelOfCategoryRule()])
         ];
     }
 }

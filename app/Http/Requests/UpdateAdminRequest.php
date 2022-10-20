@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class UpdateAdminRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class UpdateAdminRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +26,18 @@ class UpdateAdminRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required',
+            'email' => ['required', Rule::unique('admins')->ignore($this->id)],
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'exists:roles,id',
+            'password' => ['nullable', Rule::requiredIf(function () {
+                return $this->password ?? false;
+            }), 'confirmed','max:20',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()]
         ];
     }
 }

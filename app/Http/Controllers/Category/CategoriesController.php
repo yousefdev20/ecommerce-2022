@@ -3,19 +3,25 @@
 namespace App\Http\Controllers\Category;
 
 use App\Models\Product\Category;
-use App\Repositories\Products\TopSelling\TopSellingProductInterface;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Repositories\Category\CategoriesRepositoryInterface;
-use Illuminate\Support\Facades\DB;
 
 class CategoriesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:delete_category')->only('destroy');
+        $this->middleware('permission:edit_category')->only('update');
+        $this->middleware('permission:show_category')->only('show');
+    }
+
     /**
      * Display a listing of the resource.
      *
+     * @param CategoriesRepositoryInterface $categoriesRepository
      * @return JsonResponse
      */
     public function index(CategoriesRepositoryInterface $categoriesRepository): JsonResponse
@@ -55,22 +61,26 @@ class CategoriesController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
-        return $this->response($category->update($request->validated()));
+        $data = [$request->except(['image'])];
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('public/categories/' . date('Y-m-d'));
+            $data[0]['image'] = $path;
+        }
+        return $this->response($category->update($data[0]));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Category  $category
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(Category $category): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        if ($category->loadCount('products') > 0){
-
-            return $this->response([], 'this object has relationship', 422);
+        if (!Category::query()->hasProducts()->find($id)) {
+            return $this->response(Category::query()->find($id)->delete());
         }
-        return $this->response($category->delete());
+        return $this->response(['data' => 'this category has product, you cant delete it.'], null, 422);
     }
 
     /**

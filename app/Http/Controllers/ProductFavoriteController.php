@@ -23,7 +23,7 @@ class ProductFavoriteController extends Controller
      * Update function retrieve product it checks if product already stored on favorite
      * if the response was true it shall delete from favorite.
      *
-     * @param Product $product
+     * @param $productID
      * @return JsonResponse
      */
     public function update($productID): JsonResponse

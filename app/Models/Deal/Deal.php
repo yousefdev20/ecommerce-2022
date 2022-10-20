@@ -3,6 +3,7 @@
 namespace App\Models\Deal;
 
 use App\Models\Product\Product;
+use App\Models\Product\Size;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
@@ -16,7 +17,7 @@ class Deal extends Model
 
     public function getStatusAttribute(): bool
     {
-        return $this->expiration_date > Carbon::now()->endOfWeek()->format('Y-m-d H:i:s');
+        return $this->expiration_date > now();
     }
 
     public function products()

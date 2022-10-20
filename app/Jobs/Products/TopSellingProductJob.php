@@ -33,6 +33,6 @@ class TopSellingProductJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->products->refresh();
+//        $this->products->refresh();
     }
 }

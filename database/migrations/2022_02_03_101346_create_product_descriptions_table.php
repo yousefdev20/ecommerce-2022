@@ -14,9 +14,12 @@ class CreateProductDescriptionsTable extends Migration
     public function up()
     {
         Schema::create('product_descriptions', function (Blueprint $table) {
-            $table->id();
-            $table->text('description_en');
-            $table->text('description_ar');
+            $table->id()->index();
+            $table->text('description_en')->nullable();
+            $table->text('description_ar')->nullable();
+            $table->string('depth')->nullable();
+            $table->string('height')->nullable();
+            $table->string('width')->nullable();
             $table->timestamps();
         });
     }

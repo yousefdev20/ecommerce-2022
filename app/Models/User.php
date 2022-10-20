@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Casts\EmailCast;
+use App\Models\Order\BillingAddress;
 use App\Models\Order\Order;
+use App\Models\Order\ShippingAddress;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Product\ProductFavorite;
@@ -47,9 +49,10 @@ class User extends Authenticatable
     protected $casts = [
 //        'email' => EmailCast::class,
         'email_verified_at' => 'datetime',
+//        'email' => 'encrypted'
     ];
 
-    public function favorites()
+    public function favorites(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(ProductFavorite::class);
     }
@@ -59,8 +62,18 @@ class User extends Authenticatable
         $this->attributes['password'] = Hash::make($value);
     }
 
-    public function orders()
+    public function orders(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function shipping_addresses(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ShippingAddress::class);
+    }
+
+    public function billing_addresses(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(BillingAddress::class);
     }
 }

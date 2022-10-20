@@ -4,18 +4,20 @@ namespace App\Providers;
 
 use App\Http\Services\Cart;
 use App\Repositories\Colors\Colors;
-use App\Repositories\Products\TopSelling\TopSellingProductInterface;
-use App\Repositories\Products\TopSelling\TopSellingProductRepositories;
+use App\Repositories\Sizes\Sizes;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Currencies\Currency;
+use App\Repositories\Sizes\SizesInterface;
 use App\Repositories\Colors\ColorsInterface;
 use App\Repositories\Currencies\CurrencyInterface;
 use App\Repositories\Countries\CountriesRepository;
 use App\Repositories\Category\CategoriesRepository;
 use App\Repositories\Exclusives\ExclusiveRepository;
 use App\Repositories\Countries\CountriesRepositoryInterface;
-use App\Repositories\Exclusives\ExclusivesRepositoryInterface;
 use App\Repositories\Category\CategoriesRepositoryInterface;
+use App\Repositories\Exclusives\ExclusivesRepositoryInterface;
+use App\Repositories\Products\TopSelling\TopSellingProductInterface;
+use App\Repositories\Products\TopSelling\TopSellingProductRepositories;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,12 +48,20 @@ class AppServiceProvider extends ServiceProvider
             return new Colors();
         });
 
+        app()->bind(SizesInterface::class, function () {
+            return new Sizes();
+        });
+
         app()->bind(CountriesRepositoryInterface::class, function () {
             return new CountriesRepository();
         });
 
         app()->bind('Currency', function () {
             return new \App\Http\Services\Currency(new Currency());
+        });
+
+        app()->bind('Language', function () {
+            return new \App\Http\Services\Language();
         });
 
         app()->bind('Cart', function () {

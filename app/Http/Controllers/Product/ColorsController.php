@@ -11,9 +11,16 @@ use App\Http\Requests\UpdateColorRequest;
 
 class ColorsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:delete_color')->only('destroy');
+        $this->middleware('permission:edit_color|show_color')->only(['update']);
+    }
+
     /**
      * Display a listing of the resource.
      *
+     * @param ColorsInterface $colors
      * @return JsonResponse
      */
     public function index(ColorsInterface $colors): JsonResponse

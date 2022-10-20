@@ -18,6 +18,8 @@ class LoginController extends Controller
     {
         $admin = Admin::query()->where(['email' => $request->username])->first();
         if ($admin && Hash::check($request->password ?? '', $admin->password ?? null)) {
+            $admin['permissions'] = $admin->load(['permissions']);
+            $admin['roles'] = $admin->load(['roles.permissions']);
             $admin['token'] = $admin->createToken('admin')->plainTextToken;
 
             return $this->response($admin);

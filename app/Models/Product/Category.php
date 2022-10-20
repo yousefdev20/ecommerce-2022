@@ -2,8 +2,8 @@
 
 namespace App\Models\Product;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use App\Http\Services\Facades\Language\Language;
 
 class Category extends Model
 {
@@ -32,6 +32,11 @@ class Category extends Model
 //        $query->where([['parent_id', '=', null], ['level', '=', 1]]);
     }
 
+    public function scopeHasProducts($query)
+    {
+        $query->has('products');
+    }
+
     public function setImageAttribute($value)
     {
         $this->attributes['image'] = str_replace('public', 'storage', $value);
@@ -40,6 +45,14 @@ class Category extends Model
     public function getImageAttribute($value): null|string|\Illuminate\Contracts\Routing\UrlGenerator|\Illuminate\Contracts\Foundation\Application
     {
         return $value ? url($value ?? '') : null;
+    }
+
+    public function getNameEnAttribute($value)
+    {
+        if (Language::code() !== 'en'){
+            return $this->name_ar ?? '';
+        }
+        return $value;
     }
 
 }

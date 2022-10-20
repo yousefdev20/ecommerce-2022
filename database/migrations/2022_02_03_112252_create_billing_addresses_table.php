@@ -24,6 +24,8 @@ class CreateBillingAddressesTable extends Migration
             $table->string('zip')->nullable();
             $table->string('email');
             $table->string('phone');
+            $table->string('longitude')->nullable();
+            $table->string('latitude')->nullable();
             $table->text('note')->nullable();
             $table->unsignedBigInteger('country_id')->index();
             $table->unsignedBigInteger('user_id')->nullable();

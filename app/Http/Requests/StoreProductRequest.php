@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\Products\StoreSizeRule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Rules\Products\SizeExistsRule;
+use App\Rules\Products\UnitExistsRule;
+use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProductRequest extends FormRequest
 {
@@ -44,20 +45,25 @@ class StoreProductRequest extends FormRequest
             }), 'mimes:jpeg,png,gif,svg', 'max:2048'],
             'currency_id' => 'required|exists:currencies,id',
             'category_id' => 'required|exists:categories,id',
+            'sale_unit' => ['nullable', new UnitExistsRule()],
+            'kg' => ['nullable', Rule::requiredIf($this->sale_unit == 1), 'integer', 'min:0'],
+            'pieces' => ['nullable', Rule::requiredIf($this->sale_unit == 2), 'integer', 'min:0'],
+            'package_items.*' => ['array', 'min:1'],
+            'package_items.*.description' => [Rule::requiredIf($this->package_items ?? false)],
             'slider' => ['nullable', Rule::when($validation, 'mimes:png')],
-            'description_en' => 'required',
-            'description_ar' => 'required',
-            'sizes' => 'nullable|array',
-            'sizes.*.size' => Rule::requiredIf(function () {
-                return request('sizes') ?? false;
-            }),
-            'sizes.*.product_id' => Rule::requiredIf(function () {
-                return request('sizes') ?? false;
-            }),
+            'product_description.description_en' => 'nullable',
+            'product_description.description_ar' => 'nullable',
+            'product_description.width' => 'nullable',
+            'product_description.height' => 'nullable',
+            'product_description.depth' => 'nullable',
             'colors_id' => 'nullable|array',
             'colors_id.*' => [Rule::requiredIf(function () {
                 return request('colors') ?? false;
-            }), 'exists:colors,id']
+            }), 'exists:colors,id'],
+            'sizes_id' => 'nullable|array',
+            'sizes_id.*' => [Rule::requiredIf(function () {
+                return request('sizes_id') ?? false;
+            }), new SizeExistsRule()]
         ];
     }
     public function messages()
