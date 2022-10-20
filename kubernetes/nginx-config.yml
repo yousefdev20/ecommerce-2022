@@ -1,4 +1,12 @@
-server {
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  labels:
+    tier: backend
+data:
+  config : |
+    server {
     server_name iron_server;
     access_log /var/logs/nginx/iron.access.log;
     error_log /var/logs/nginx/iron.error.log;

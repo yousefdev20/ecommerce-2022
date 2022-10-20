@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    tier: backend
+    app: nginx
+spec:
+  ports:
+    - protocol: TCP
+      port: 85
+      targetPort: 85
+      nodePort: 32380
+  selector:
+    tier: backend
+    app: nginx
+  type: LoadBalancer
