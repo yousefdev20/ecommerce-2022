@@ -2,14 +2,14 @@
 # IRON Bridge
 
 Ecommerce system
-"# IRON" (BACKEND)
+"# ecommerce" (BACKEND)
 ``` 
 laravel -v 8.82.0
 php -v  8.1.4
  ```
 ### Maintainer
 ```
-Magnetar Digital Lab (Yousef)
+(Yousef)
 ```
 
 ### Implementation Note
